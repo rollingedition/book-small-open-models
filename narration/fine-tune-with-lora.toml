@@ -1,0 +1,21 @@
+# Spoken descriptions for chapter 5 (audio.md, "Spoken descriptions"). Code and output are never read aloud.
+
+[examples.lora-thirty-steps]
+say = "The example trains the classifier for {{out:lora-thirty-steps:training steps}} steps, at batch size {{out:lora-thirty-steps:batch size}} and seed {{out:lora-thirty-steps:seed}}, on the training rows that dev does not hold back. It prints the trainable parameter count, {{out:lora-thirty-steps:trainable parameters}}, split into the adapter's {{out:lora-thirty-steps:LoRA parameters}} and the head's {{out:lora-thirty-steps:head parameters}}. It prints the loss at steps ten, twenty and thirty, and the loss of a uniform guess over the seventy-seven teams for comparison. Then it scores the two hundred test messages, and its accuracy is {{out:lora-thirty-steps:accuracy on test_200}}. At the placeholder threshold every message is handed off, {{out:lora-thirty-steps:handed off at placeholder 0.50}}, so the accuracy on messages not handed off is not defined."
+
+[examples.lora-recorded-adapter]
+say = "The example loads the recorded adapter, banking seventy-seven, LoRA, version one, offline, and scores the two hundred test messages at the threshold in its manifest, {{out:lora-recorded-adapter:handoff threshold from manifest}}. It trains nothing. It prints the accuracy, {{out:lora-recorded-adapter:accuracy on test_200}}, the hand-off count, {{out:lora-recorded-adapter:handed off}}, and the accuracy on the messages not handed off, {{out:lora-recorded-adapter:accuracy on messages not handed off}}."
+
+[examples.compare-with-standin]
+say = "The example compares two models on the same two hundred test messages. It reads the stand-in's recorded answers, and it runs the adapter live at its manifest threshold. It prints each model's correct count: the stand-in's is {{out:compare-with-standin:stand-in correct}}, and the adapter's is {{out:compare-with-standin:adapter banking77-lora-v1 correct}}. The stand-in's hand-off count, {{out:compare-with-standin:stand-in handed off}}, is at chapter one's placeholder threshold. The adapter's, {{out:compare-with-standin:adapter handed off}}, is at its own. It ends with two counts: the messages the adapter gets right and the stand-in gets wrong, {{out:compare-with-standin:right for the adapter, wrong for the stand-in}}, and the reverse, {{out:compare-with-standin:right for the stand-in, wrong for the adapter}}."
+
+[examples.choose-threshold-on-dev]
+say = "The example chooses the threshold on the dev split, and never on the test sample. It scores the dev messages, of which there are {{out:choose-threshold-on-dev:dev messages}}. It takes the lowest threshold on a grid of hundredths at which accuracy on the messages not handed off is at least {{out:choose-threshold-on-dev:target accuracy on messages not handed off}}. That threshold is {{out:choose-threshold-on-dev:chosen threshold}}. The example checks it against the manifest, then prints three thresholds, so a listener can hear the trade-off: the hand-off rate and the accuracy on the kept messages at each one."
+
+[examples.calibration-bands-on-dev]
+say = "The example groups the dev messages by the adapter's confidence into five bands, from zero to 0.2 up to 0.8 to 1.0, out of {{out:calibration-bands-on-dev:dev messages}} in all. For each band it prints the number of messages, the number correct with the accuracy, and the mean confidence. The bottom band holds {{out:calibration-bands-on-dev:band 0.0-0.2 messages}} message, so its accuracy says nothing about low confidence. From the second band up, accuracy rises. In the top band the mean confidence, {{out:calibration-bands-on-dev:band 0.8-1.0 mean confidence}}, is above the accuracy, {{out:calibration-bands-on-dev:band 0.8-1.0 correct}}, and the top band holds {{out:calibration-bands-on-dev:band 0.8-1.0 messages}} messages."
+
+[[tables]]
+section = "choose-the-threshold-on-dev"
+starts = "| Threshold | Handed off, on dev |"
+say = "The table sets three thresholds side by side: 0.50, the chosen value, and 0.90. For each one it gives the share of dev messages handed off and the accuracy on the messages kept, each with its count. A higher threshold hands off more messages, and the messages it keeps are more accurate. The chosen value is the lowest one that meets the target."

@@ -1,0 +1,15 @@
+# Spoken descriptions for chapter 3 (audio.md, "Spoken descriptions"). Code and output are never read aloud.
+
+[examples.load-both-models-offline]
+say = "The code loads the 135M and the 360M models at their pinned commits, offline, and prints each one's parameter count in millions and its layer count. The parameter counts are {{out:load-both-models-offline:parameters, millions, rounded}} million, in that order. The second output line gives each model's layer count."
+
+[examples.count-prompt-tokens]
+say = "The code counts the tokens of the router prompt for each message in the fixed test sample, using the 135M model's tokenizer, and runs no model. It prints the number of messages, {{out:count-prompt-tokens:messages}}, then the fewest, the median and the most tokens: {{out:count-prompt-tokens:prompt tokens min}}, {{out:count-prompt-tokens:prompt tokens median}} and {{out:count-prompt-tokens:prompt tokens max}}. Last, it prints the total of the 40 prompts, {{out:count-prompt-tokens:prompt tokens total}} tokens, and their mean, {{out:count-prompt-tokens:prompt tokens mean, rounded}} tokens, rounded."
+
+[examples.count-forward-passes]
+say = "The code runs one test message through a classifier and through the generative model, and counts the forward passes that each one makes. The classifier makes {{out:count-forward-passes:classifier forward passes}} pass. The generative model makes {{out:count-forward-passes:generative forward passes}} passes, and the answer is {{out:count-forward-passes:answer tokens, end token not counted}} tokens long, not counting the end token. The code prints counts only."
+
+[[tables]]
+section = "the-candidates-and-what-we-keep"
+starts = "| Model | Role in this book |"
+say = "A table of the three SmolLM2 sizes, one per row. The 135M model is the core model, the 360M is the comparison, and the 1.7B model is neither pinned nor run. Each row also gives the model's licence, and the 1.7B row says no licence is recorded, because the model is not pinned."

@@ -1,0 +1,18 @@
+# Spoken descriptions for chapter 1 (audio.md, "Spoken descriptions"). Code and output are never read aloud.
+
+[examples.record-your-own-answers]
+say = "The example writes the stand-in's answers to a file, one line per message, through the same function a reader uses for their own model. Here the stand-in reads the recording, so the check tests the writer and not a model. It reports {{out:record-your-own-answers:messages written}} messages written, and {{out:record-your-own-answers:lines matching the recording}} lines matching the recording."
+
+[examples.route-recorded-answers]
+say = "The example reads the stand-in's recorded answers for the sample and applies the placeholder threshold to their confidences. It prints the sample's size, {{out:route-recorded-answers:messages}} messages, the placeholder threshold, {{out:route-recorded-answers:placeholder threshold}}, the accuracy, {{out:route-recorded-answers:accuracy}}, the messages handed off, {{out:route-recorded-answers:handed off}}, and the accuracy on the messages not handed off, {{out:route-recorded-answers:accuracy on messages not handed off}}."
+
+[examples.unconstrained-first-try]
+say = "The example asks the small model for a team on the first twenty messages of the sample, with no constraint on its answer, and counts the answers that are team names. It prints that count with the sample's size: {{out:unconstrained-first-try:answers that are a team name}} answers that are team names. The answers are never returned to a caller."
+
+[examples.route-one-message]
+say = "The example takes the first message of the sample and reads the stand-in's recorded answer for it. It applies the placeholder threshold through the hand-off rule, and prints the team, the confidence rounded to two places, and the hand-off flag. The message's text is never printed. For this message the team is {{out:route-one-message:team}}, the confidence is {{out:route-one-message:confidence}}, and the flag is {{out:route-one-message:handed off}}."
+
+[[tables]]
+section = "what-the-router-returns"
+starts = "| Output | What it is | What uses it |"
+say = "A table of the router's three outputs, one per row. The team is the label the router names. The confidence is the probability llama-cpp-python returns for the constrained answer, a score rather than a calibrated probability. The hand-off flag is true when the confidence is below the threshold, and then a person takes the message. Each row also says what uses that output."

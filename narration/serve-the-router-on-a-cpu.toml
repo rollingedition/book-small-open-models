@@ -1,0 +1,12 @@
+# Spoken descriptions for chapter 8 (audio.md, "Spoken descriptions"). Code and output are never read aloud.
+
+[examples.serve-route-testclient]
+say = "The example loads the recorded adapter, banking seventy-seven, LoRA, version one, behind one route, and sends the route each of the forty messages in the test forty sample. It prints counts, never message text. The route answers {{out:serve-route-testclient:responses}} requests. The hand-off count is {{out:serve-route-testclient:handed off}}. Every flagged message comes back with no team: {{out:serve-route-testclient:handed off, team is None}}. Among the messages kept, {{out:serve-route-testclient:not handed off, team is the gold label}} have the labelled team. The number of team names outside the list of seventy-seven is {{out:serve-route-testclient:team names outside the list}}. Last, it sends a body with no message, and prints the reply's status, {{out:serve-route-testclient:status on an empty body}}, and whether its detail field is a list: {{out:serve-route-testclient:detail is a list}}."
+
+[examples.truncation-count]
+say = "The example loads only the tokenizer, and counts the test two hundred messages longer than sixty-four tokens, {{out:truncation-count:messages over 64 tokens}}, and longer than one hundred twenty-eight tokens, which is where the route cuts, {{out:truncation-count:messages over 128 tokens where classify() cuts}}. The example then repeats one message until it is longer than one hundred twenty-eight tokens, and tokenizes it the way the route does. The message comes to {{out:truncation-count:repeated message tokens before the cut}} tokens before the cut and {{out:truncation-count:repeated message tokens after the cut}} after it. No model runs, and no message text is printed."
+
+[[blocks]]
+section = "what-goes-wrong-in-production"
+starts = "# serve_route.py"
+say = "The module uvicorn imports is short: it imports the router library, then builds the app once, from the recorded folder, with two threads."

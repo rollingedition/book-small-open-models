@@ -1,0 +1,8 @@
+{
+  "machine": "a cloud machine with 4 vCPUs and 15 GiB of memory, 4 threads",
+  "unit": "messages per second, on test_200, after one warm-up call",
+  "standin_one_message_per_call": 0.32,
+  "classifier_fp32_batches_of_16": 33.0,
+  "classifier_int8_batches_of_16": 29.0,
+  "classifier_fp32_one_message_per_call": 19.0
+}

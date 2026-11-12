@@ -1,0 +1,44 @@
+{
+  "script": "recordings/prompting_eval.py",
+  "model": "HuggingFaceTB/SmolLM2-135M-Instruct, HuggingFaceTB/SmolLM2-360M-Instruct",
+  "model_version": {
+    "HuggingFaceTB/SmolLM2-135M-Instruct": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "HuggingFaceTB/SmolLM2-360M-Instruct": "a10cc1512eabd3dde888204e902eca88bddb4951"
+  },
+  "prompt_sha256": "cd8fd67392dadbf076919df26176fedb74b644b17b3fbd446320169753508c78",
+  "prompt_role": "router prompt: raw for 135m-raw and 360m-raw; in the SmolLM2 chat template for 135m-chat",
+  "created": "2026-11-12",
+  "recipe_sha256": "fa1ea855a5e3cca35b09b1560399e42ebff7bb92d63023fdf322378df6c33573",
+  "data_commit": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+  "settings": {
+    "variants": {
+      "135m-raw": {
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "prompt": "router prompt, raw, add_special_tokens default",
+        "decoding": "greedy, max_new_tokens 32, prefix-constrained to the 77 labels"
+      },
+      "360m-raw": {
+        "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+        "prompt": "router prompt, raw, add_special_tokens default",
+        "decoding": "greedy, max_new_tokens 32, prefix-constrained to the 77 labels"
+      },
+      "135m-chat": {
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "prompt": "router prompt in the chat template, with the model's default system prompt",
+        "decoding": "greedy, max_new_tokens 32, prefix-constrained to the 77 labels, add_special_tokens False"
+      }
+    },
+    "dtype": "float32",
+    "attn_implementation": "eager",
+    "threads": 4,
+    "sample": "test_200",
+    "messages": 200,
+    "label_text": "team, one of the 77 labels"
+  },
+  "outputs": [
+    "answers.jsonl"
+  ],
+  "output_sha256": {
+    "answers.jsonl": "5778aaefa8f3f9727bf637ef0a6bae4849da671fccec23c569b7346d9fb9c62e"
+  }
+}

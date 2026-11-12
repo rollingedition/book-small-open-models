@@ -1,0 +1,21 @@
+# Spoken descriptions for chapter 4 (audio.md, "Spoken descriptions"). Code and output are never read aloud.
+
+[examples.constrained-decode-135m]
+say = "The example routes the first six messages of test forty with the 135M model. Each answer may only be a team name, so the decoder works through a token trie of the 77 names. It prints how many answers are team names, {{out:constrained-decode-135m:answers that are a team}}, how many are right, {{out:constrained-decode-135m:accuracy}}, how many distinct teams it gave, and the team it gave most often, {{out:constrained-decode-135m:most given team}}."
+
+[examples.constrained-decode-360m]
+say = "The example runs the same six messages through the 360M model, with the same constraint. It prints {{out:constrained-decode-360m:answers that are a team}} answers that are team names, and {{out:constrained-decode-360m:accuracy}} right."
+
+[examples.constrained-decode-135m-chat]
+say = "The example runs the 135M model on the same six messages through its chat template, with the same constraint. It prints {{out:constrained-decode-135m-chat:answers that are a team}} answers that are team names, {{out:constrained-decode-135m-chat:accuracy}} right, and {{out:constrained-decode-135m-chat:distinct teams given}} distinct teams given."
+
+[examples.label-scoring-prior]
+say = "The example scores all 77 teams for three of the test messages with the 135M model. Each team's score is the sum of the log-probabilities of its tokens. It prints the number of messages, {{out:label-scoring-prior:messages}}, the number of distinct top teams, {{out:label-scoring-prior:distinct top teams}}, and the most frequent top team, {{out:label-scoring-prior:most frequent top team name}}, which is top for {{out:label-scoring-prior:most frequent top team}}."
+
+[examples.prompting-on-test-200]
+say = "The example reads the saved answers of three variants on all two hundred test messages, and it loads no model. For each variant it prints how many answers are not team names, how many are right, how many distinct teams were given, the team given most often with its count, and how many messages that team is the right answer for. The table in the chapter sets the three variants side by side."
+
+[[tables]]
+section = "measure-the-constrained-answers"
+starts = "| Variant on test_200 | Answers outside the team list"
+say = "The table has one row for each variant: the 135M model with the raw prompt, the 135M model with the chat template, and the 360M model with the raw prompt. Its three columns give the number of answers outside the team list, the number of right answers, and the number of distinct teams given, each taken from the counts the example printed."

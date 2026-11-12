@@ -1,0 +1,46 @@
+{
+  "script": "recordings/lora_full.py",
+  "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "model_version": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "prompt_sha256": "cd8fd67392dadbf076919df26176fedb74b644b17b3fbd446320169753508c78",
+  "prompt_role": "not used: the classifier reads the raw message text",
+  "created": "2026-11-12",
+  "recipe_sha256": "085090b625693d476f4b34f0057c7ff3f7ac10064b870c6ad9fd7bc724514e60",
+  "data_commit": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+  "settings": {
+    "lora": {
+      "r": 8,
+      "alpha": 16,
+      "dropout": 0.0,
+      "targets": [
+        "q_proj",
+        "v_proj"
+      ],
+      "head": "trainable"
+    },
+    "optimizer": "AdamW lr 1e-3",
+    "batch_size": 8,
+    "epochs": 1,
+    "seed": 0,
+    "dtype": "float32",
+    "max_length": 128,
+    "n_threads": 4,
+    "train_rows": 9000,
+    "dev_excluded": true,
+    "steps": 1125,
+    "data": "train.csv rows not in dev"
+  },
+  "outputs": [
+    "adapter/adapter_model.safetensors",
+    "adapter/adapter_config.json",
+    "steps.jsonl"
+  ],
+  "output_sha256": {
+    "adapter/adapter_model.safetensors": "274ff472ce157e5334fee25da3eac40a22cc54c5af8bbc07802dacea393edc52",
+    "adapter/adapter_config.json": "d6b25d6f6025719c0a66c51de7fca06a7e0495e7489f1fc9381214ae03397fe6",
+    "steps.jsonl": "f517c80bca13292cb517d4b5b80370865f1470c7fa81a565b8535dac99b58e45"
+  },
+  "adapter": "banking77-lora-v1",
+  "handoff_threshold": 0.63,
+  "threshold_rule": "lowest t on a 0.01 grid with accuracy >= 0.90 on dev messages not handed off"
+}

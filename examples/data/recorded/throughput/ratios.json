@@ -1,0 +1,8 @@
+{
+  "messages": 200,
+  "classifier_fp32_over_standin": 104.0,
+  "classifier_int8_over_standin": 91.8,
+  "classifier_int8_over_fp32": 0.9,
+  "agreement_fp32_int8": 200,
+  "classifier_fp32_one_at_a_time_over_standin": 60.8
+}

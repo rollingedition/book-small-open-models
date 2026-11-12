@@ -1,0 +1,28 @@
+{
+  "script": "recordings/throughput.py",
+  "model": "unsloth/Qwen3-4B-Instruct-2507-GGUF / Qwen3-4B-Instruct-2507-Q4_K_M.gguf; HuggingFaceTB/SmolLM2-135M-Instruct",
+  "model_version": "a06e946bb6b655725eafa393f4a9745d460374c9",
+  "prompt_sha256": "cd8fd67392dadbf076919df26176fedb74b644b17b3fbd446320169753508c78",
+  "prompt_role": "input to the stand-in only; the classifier reads the raw message",
+  "created": "2026-11-12",
+  "recipe_sha256": "d80c5102b3fd457f418749d11d7832d4948c5c66c3704a4e7f1c55e494b85544",
+  "data_commit": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+  "settings": {
+    "sample": "test_200",
+    "n_threads": 4,
+    "classifier_adapter": "banking77-lora-v1",
+    "int8": "banking77-lora-v1-int8: merged LoRA, torchao 0.18.0 Int8WeightOnlyConfig on backbone Linear layers, score head float32",
+    "batch_size": 16,
+    "gguf_sha256": "3605803b982cb64aead44f6c1b2ae36e3acdb41d8e46c8a94c6533bc4c67e597",
+    "output": "ratios, and rates to two significant figures with the machine named (proposal, risk 5)"
+  },
+  "outputs": [
+    "ratios.json",
+    "rates.json"
+  ],
+  "output_sha256": {
+    "ratios.json": "571984b4fb2ff39e480f8ff935180062789070505705df499fe0c5ba4a0d278c",
+    "rates.json": "25c6111f9337f148a75dfb3a99952b8db9380a4221770c5c482fffd3c2223b66"
+  },
+  "machine": "a cloud machine with 4 vCPUs and 15 GiB of memory, 4 threads"
+}

@@ -1,0 +1,34 @@
+{
+  "script": "recordings/gold_same_rows.py",
+  "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "model_version": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "prompt_sha256": "cd8fd67392dadbf076919df26176fedb74b644b17b3fbd446320169753508c78",
+  "prompt_role": "not used: the classifier reads the raw message text",
+  "created": "2026-11-12",
+  "recipe_sha256": "d16b6c1ac95c1589f7b460befaf6d3c303b09db47d0377eb08d7053a66a45c1d",
+  "data_commit": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+  "settings": {
+    "recipe": "same as lora-full",
+    "labels_from": "train.csv gold labels, for the rows in teacher-labels",
+    "rows": 1000,
+    "steps": 125,
+    "batch_size": 8,
+    "epochs": 1,
+    "seed": 0,
+    "n_threads": 4,
+    "dtype": "float32",
+    "max_length": 128
+  },
+  "outputs": [
+    "adapter/adapter_model.safetensors",
+    "adapter/adapter_config.json",
+    "steps.jsonl"
+  ],
+  "output_sha256": {
+    "adapter/adapter_model.safetensors": "c0d6d97310fdf3ab38cdb0766047ce4847707074cf7255f4a2e6be30424fe627",
+    "adapter/adapter_config.json": "d6b25d6f6025719c0a66c51de7fca06a7e0495e7489f1fc9381214ae03397fe6",
+    "steps.jsonl": "6dd9f48554711e14178ee319aa5acdd47104a10165b52c61f7df14eb4b53f26e"
+  },
+  "adapter": "banking77-gold-1000-v1",
+  "control_for": "distill-student"
+}

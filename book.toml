@@ -1,0 +1,12 @@
+# Book manifest: how this book is cataloged. Validated against the taxonomy on every pull request.
+slug = "small-open-models"
+title = "Small Open Models"
+subtitle = "Choose, fine-tune, distill, quantize and serve a small open model for one job, and know when it beats a hosted model."
+summary = "How to replace a hosted model with one you run for a single job, and when it is the wrong choice: measuring the task, choosing a base model, prompting, LoRA fine-tuning, distillation, quantization, CPU serving, versions and hand-offs to people, on a bank's support messages from BANKING77."
+status = "live"                      # draft | live | unmaintained | retired
+level = "in-practice"                 # foundations | in-practice
+reader = "For engineers and data scientists who already call a hosted model's API for one narrow, repeated job, such as routing support messages, and want to know whether a model they run themselves can do it. You need Python and some use of an LLM API, not a transformer's internals."
+skills = ["fine-tuning", "large-language-models", "natural-language-processing", "model-evaluation"]   # 1 to 5; the first is primary; areas follow from the skills
+line = "main"                         # edition line
+core_libraries = ["torch", "transformers", "peft", "fastapi"]   # names only; versions are pinned in examples/requirements.txt
+sponsor = ""
