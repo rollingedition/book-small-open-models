@@ -6,9 +6,9 @@ chapter_id: prompt-and-constrain
 
 By the end of this chapter, you can write a router prompt for a small open model, constrain its answer so that it can only be a team name, and measure how many of those answers are right. You will also see why a valid answer is not a correct one, which is why the next chapter trains a model instead of asking it better questions.
 
-A router that sends the bank's messages to one of 77 teams needs every answer to be a team name, and when [chapter 1](route-a-message) let a small model answer in free text, the model did not return teams. This chapter first makes the answer a team by construction. It then runs the two open models from [chapter 3](choose-a-base-model), SmolLM2-135M-Instruct and SmolLM2-360M-Instruct, with one prompt and one constraint, and measures what they return. The 135M model is the one [chapter 5](fine-tune-with-lora) trains, so the counts here are the ones that training has to beat.
+A router needs every answer to be a team name, and when [chapter 1](route-a-message) let a small model answer in free text, the model did not return teams. This chapter first makes the answer a team by construction. It then runs the two open models from [chapter 3](choose-a-base-model), SmolLM2-135M-Instruct and SmolLM2-360M-Instruct, with one prompt and one constraint, and measures what they return. The 135M model is the one [chapter 5](fine-tune-with-lora) trains, so the counts here are the ones that training has to beat.
 
-Two kinds of number appear, and the chapter keeps them apart. The live examples run on the first six messages of `test_40`, the 40-message fixed sample of the test split that [chapter 1](route-a-message) uses, and the same six for both models. They show the mechanism. Six messages cannot separate two models, so the comparison uses a recording: each model and prompt answered all 200 messages of `test_200`, a fixed sample of 200 test messages that includes those six, once, and the answers were saved. Reading the recording loads no model, and its counts come from the saved answers and nothing else.
+Two kinds of number appear, and the chapter keeps them apart. The live examples run on the first six messages of `test_40`, the first 40 messages of the [fixed sample](measure-the-routing-task#dev-test-and-fixed-samples), and the same six for both models. They show the mechanism. Six messages cannot separate two models, so the comparison uses a recording: each model and prompt answered all 200 messages of `test_200`, the first 200 of that sample, which includes those six, once, and the answers were saved. Reading the recording loads no model, and its counts come from the saved answers and nothing else.
 
 ## The prompt, settled before any recording {#the-prompt-settled-before-any-recording}
 
@@ -130,7 +130,7 @@ Label scoring does give a score for each team, which is what a hand-off rule nee
 
 The rules in this chapter are scoped to these two models, this prompt and this constraint, on the 200 messages of the recording. A larger model, a different prompt or a longer sample could move the counts, and the book has not tested any of them on that sample. What the chapter does establish is narrower: with the raw prompt and the trie, a model of this size returns valid teams and few right ones, and the count of right ones is the number to watch.
 
-Each decision is tested in its own section: the prompt in the first, the trie in [its section](#a-token-trie-allows-only-team-names) and greedy decoding in [its section](#ties-and-determinism), and the two counts in the measurement section. A reader who changes any of them must record again before comparing, as the first section says.
+Each decision is tested in its own section: the prompt in the first, the trie in [its section](#a-token-trie-allows-only-team-names) and greedy decoding in [its section](#ties-and-determinism), and the two counts in the measurement section. A reader who changes any of them must record again before comparing, as the first section says. A constraint makes every answer valid, and only training can make it right.
 
 This chapter made these decisions:
 

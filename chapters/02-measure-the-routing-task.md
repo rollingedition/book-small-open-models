@@ -6,13 +6,13 @@ chapter_id: measure-the-routing-task
 
 By the end of this chapter, you can say what each of the book's samples is for, compute the three measures the router is scored on with their denominators, and read a baseline that was recorded once and is reused for every comparison.
 
-Today a hosted model sorts each message that reaches the bank's support inbox into one of 77 teams. The book's router is a small open model that the bank would run itself, and the question is whether it can match that hosted model on the messages it keeps, and say so when it is not sure of a message. Before any model is compared, the comparison needs fixed data, fixed samples and fixed measures. Otherwise two numbers that look alike may come from different messages, or be divided by different counts.
+Today a hosted model routes the messages that reach the bank's support inbox. The book's router is a small open model that the bank would run itself, and the question is whether it can match that hosted model on the messages it keeps, and say so when it is not sure of a message. Before any model is compared, the comparison needs fixed data, fixed samples and fixed measures. Otherwise two numbers that look alike may come from different messages, or be divided by different counts.
 
-This book doesn't call a hosted model, so it uses a stand-in. The stand-in is a larger open model, Qwen3-4B-Instruct-2507, in the 4-bit Q4_K_M GGUF conversion that a third party published, at its pinned revision, with its answers limited to the 77 team names. It answers every test message once, in a recording, and the examples read those answers offline, so anyone can reproduce them. [Chapter 1](route-a-message#ask-a-model-for-one-team) introduced the stand-in, and a reader with a model of their own can record its answers the same way, as [chapter 1](route-a-message#ask-a-model-for-one-team) shows.
+This book doesn't call a hosted model, so it uses a stand-in, a larger open model: Qwen3-4B-Instruct-2507. Its answers come from the 4-bit Q4_K_M GGUF conversion that a third party published, at its pinned revision, with its answers limited to the 77 team names. It answers every test message once, in a recording, and the examples read those answers offline, so anyone can reproduce them. A reader with a model of their own can record its answers the same way, as [chapter 1](route-a-message#ask-a-model-for-one-team) shows.
 
 ## The data and its licence {#the-data-and-its-licence}
 
-The router is trained and measured on BANKING77, a public dataset of customer service queries in the banking domain (Casanueva et al., 2020). Each message carries one of 77 labels. The dataset calls its labels intents. This book calls them teams, because that is what the inbox routes to, and the word "team" is used in every chapter from here on.
+The router is trained and measured on BANKING77, a public dataset of customer service queries in the banking domain (Casanueva et al., 2020). Each message carries one of 77 labels. BANKING77 calls its labels intents; they are the inbox's teams ([chapter 1](route-a-message)).
 
 Casanueva et al. (2020) introduce the dataset in *[Efficient Intent Detection with Dual Sentence Encoders](https://arxiv.org/abs/2003.04807)*, in the Proceedings of the 2nd Workshop on Natural Language Processing for Conversational AI, pages 38–45 (Anthology ID 2020.nlp4convai-1.5; arXiv 2003.04807). Their abstract describes it as a hard dataset from one domain, with 13,083 labelled examples over 77 intents, and their section 3 gives the same count for the banking-domain set, which they name BANKING 77. The data card gives the commit the files come from. The two files together hold the same 13,083 messages, which the next section counts.
 
@@ -78,7 +78,7 @@ In production, the hand-off rate is the measure that changes first. The mix of m
 
 ## The baseline from recorded answers {#the-baseline-from-recorded-answers}
 
-A measure means little until something has been scored against it. The baseline is the stand-in's score on `test_1001`, the sample that the final comparison in [chapter 10](when-a-small-model-is-the-wrong-choice) uses. Later chapters score candidates on its prefixes, `test_40` and `test_200`, which are the first 40 and first 200 messages of the same committed order. Each prefix is scored from the same recording, so the baseline on it is the same answers for the same messages.
+A measure means little until something has been scored against it. The baseline is the stand-in's score on `test_1001`, the sample that the final comparison in [chapter 10](when-a-small-model-is-the-wrong-choice) uses. Later chapters score candidates on its prefixes, `test_40` and `test_200`, which are the first 40 and first 200 messages of the same fixed sample. Each prefix is scored from the same recording, so the baseline on it is the same answers for the same messages.
 
 The stand-in answered each of the messages in `test_1001` once. The answers are stored in a recording, `examples/data/recorded/standin-baseline/answers.jsonl`, and each answer names a team and gives its log-probability. The recording has a manifest beside it. The manifest names the script that made the recording, the model and its pinned revision, the hash of the prompt, the decoding settings and the seed, and the hash of the answers file. The code checks the answers file against that hash before it reads a line, so a changed file fails the run rather than changing a score.
 
@@ -98,7 +98,7 @@ A reader's own hosted model is a different baseline. It will score differently o
 
 The [next section](#where-the-labels-collide) counts the stand-in's wrong answers and shows which teams they fall between. The wrong-answer count is the baseline's first number.
 
-**Working rule:** Record the baseline once, on `test_1001`, the committed sample that every candidate's prefixes come from. Store the model's pinned revision, the prompt's hash and the decoding settings in a manifest, and check the answers file against its hash before you read a line. Compare each candidate only with the baseline scored on the same messages, whether that is `test_40`, `test_200` or `test_1001`. When your own hosted model is the baseline, record its answers the same way, and say in the write-up that its scores differ from the stand-in's.
+**Working rule:** Record the baseline once, on `test_1001`, the fixed sample that every candidate's prefixes come from. Store the model's pinned revision, the prompt's hash and the decoding settings in a manifest, and check the answers file against its hash before you read a line. Compare each candidate only with the baseline scored on the same messages, whether that is `test_40`, `test_200` or `test_1001`. When your own hosted model is the baseline, record its answers the same way, and say in the write-up that its scores differ from the stand-in's.
 
 ## Where the labels collide {#where-the-labels-collide}
 

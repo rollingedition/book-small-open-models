@@ -6,9 +6,9 @@ chapter_id: serve-the-router-on-a-cpu
 
 By the end of this chapter, you can serve the router as one `POST /route` endpoint that returns a team, a confidence and a hand-off flag for each message. You can also test that the route never returns a team for a message it has handed off.
 
-[Chapter 1](route-a-message) set out the 77 teams that the inbox sends a message to. [Chapter 5](fine-tune-with-lora) built a head that gives a team and a confidence in one forward pass, and it chose the threshold that decides when a message goes to a person. This chapter puts that model behind an HTTP route, which is where the inbox's software sends a message and reads back a team or a hand-off.
+The route is where the hand-off rule either holds or fails. [Chapter 1](route-a-message) set out the teams, and [chapter 5](fine-tune-with-lora) built a head that gives a team and a confidence in one forward pass, and it chose the threshold that decides when a message goes to a person. This chapter puts that model behind an HTTP route, which is where the inbox's software sends a message and reads back a team or a hand-off.
 
-The route is where the hand-off rule either holds or fails. If a caller can get a team from the route for a message the router has flagged, the flag does nothing, however carefully chapter 5 chose its threshold. So the route computes the flag itself, from the same answer as the team, and it returns a team only when the flag is false. Nothing else in the chapter is as important as that rule.
+If a caller can get a team from the route for a message the router has flagged, the flag does nothing, however carefully chapter 5 chose its threshold. So the route computes the flag itself, from the same answer as the team, and it returns a team only when the flag is false. Nothing else in the chapter is as important as that rule.
 
 This chapter serves the float32 adapter that [chapter 5](fine-tune-with-lora#use-the-recorded-adapter) took from the recording as it was. [Chapter 7](quantize-and-measure) makes a weight-only int8 copy, `banking77-lora-v1-int8`, and measures the copy. This chapter does not. It also measures nothing about speed. That comparison comes from a recording in [chapter 10](when-a-small-model-is-the-wrong-choice), and nothing in this chapter predicts it.
 
@@ -20,11 +20,11 @@ Each field has one source, and that matters for the hand-off. The `confidence` i
 
 The route calls the classifier once per request. One forward pass gives the team and the confidence together, and the flag is computed from that same confidence. The two cannot come from two different calls and drift apart. A reader who opens the module will find one route of its own, and one path to a team, the answer the route builds after the flag is set. FastAPI adds its documentation pages, which return no team. We recommend that a router keep this shape: one route, one model call, one flag, and the team read only after the flag. A second route that skips the flag would be the quickest way to undo the work of chapter 5, and it would be hard to notice, because it would still return correct teams for the messages it does not hand off.
 
-The route test sends the route the messages of `test_40`, a committed sample of 40 messages that the book uses for quick checks, and counts the flags and the teams together. It prints counts and never the text of a message.
+Each message of `test_40`, a [fixed sample](measure-the-routing-task#dev-test-and-fixed-samples) of 40 that the book uses for quick checks, goes to the route, and the test counts the flags and the teams. It prints counts and never the text of a message.
 
 [Example: serve-route-testclient](../examples/serve-route-testclient.py)
 
-The flag and the team agree in this sample. The route answered every request, and the hand-off count is {{out:serve-route-testclient:handed off}}. Every flagged message came back without a team: {{out:serve-route-testclient:handed off, team is None}}. Of the messages the route kept, {{out:serve-route-testclient:not handed off, team is the gold label}} have the labelled team, the gold label this book scores against. That kept count is the measure [chapter 2](measure-the-routing-task#three-measures-each-with-its-denominator) calls accuracy on the messages not handed off: the correct messages among those the route did not flag. A handed-off message has no team to score, so it stays out of that count. The last count checks the label set: the number of team names outside the 77 is {{out:serve-route-testclient:team names outside the list}}.
+The flag and the team agree in this sample. The route answered every request, and the hand-off count is {{out:serve-route-testclient:handed off}}. Every flagged message came back without a team: {{out:serve-route-testclient:handed off, team is None}}. Of the messages the route kept, {{out:serve-route-testclient:not handed off, team is the gold label}} have the labelled team, the gold label this book scores against. That kept count is the measure [chapter 2](measure-the-routing-task#three-measures-each-with-its-denominator) calls accuracy on the messages not handed off: the correct messages among those the route did not flag. A handed-off message has no team to score, so it stays out of that count. The last count checks the label set: the number of team names outside the list is {{out:serve-route-testclient:team names outside the list}}.
 
 The output shows the rule's shape: a flagged message has no team, and a kept message has one. That holds for the 40 messages of the sample, which is evidence, not a proof about every request. The proof is in the code. The route test checks that the code does what the rule says, on a sample the reader can rerun.
 
@@ -68,7 +68,7 @@ The route test uses that client. It builds the route from the recorded folder, s
 
 The test does not start a server, and that is a choice. A server started inside a test would need a free port, a wait for start-up and a clean shutdown, and each of those can fail for reasons that have nothing to do with the hand-off rule. A reader who wants a check against a running server can send the same 40 messages to that server and compare its counts with these. The output is the same on every run, because `setup_runtime`, which the test calls before it builds the route, fixes the seeds, requires deterministic algorithms and sets the default type to float32. A reader who runs the test again and gets different counts has found a change in the model, the data or the environment, and should stop and find out which before trusting the route.
 
-The test checks the flag and the team together, for every answer in the sample: a flagged answer has no team, and a kept answer has one. A test that checked only the status code would pass a route that returned a team for every message, and it would miss the flag altogether. So the test prints both counts.
+Flag and team are checked together, for every answer in the sample: a flagged answer has no team, and a kept answer has one. A test that checked only the status code would pass a route that returned a team for every message, and it would miss the flag altogether. So the test prints both counts.
 
 **Working rule:** Test the route through the test client on a committed sample, and print the counts that tie the flag to the team: the number of handed-off messages, the number of those with no team, and the number of team names outside the list. A test that checks only the status code does not show that the hand-off rule holds. Each claim the test makes should have a printed line behind it, because a line is what the book can quote and a reader can rerun. A claim without a line is a claim the reader has to take on trust.
 
@@ -97,7 +97,7 @@ The fifth is the long messages, which [the section on what the route cannot scor
 
 The sixth is the lack of a record. A route that returns the flag but logs only the status code cannot show, after a change, how the hand-off rate moved. We recommend that each answer be logged with its flag, its adapter and its version, so that the rate can be counted from the logs as well as from the test.
 
-The chapter's decisions, in short, are these:
+What the chapter settled:
 
 - The route returns the flag in every answer, and a team only when the flag is false.
 - The route serves `banking77-lora-v1` in float32, with the threshold read from its manifest.
@@ -105,5 +105,7 @@ The chapter's decisions, in short, are these:
 - The route cuts each message at 128 tokens, the length the model was trained with.
 - Each worker process holds one model and builds it with two threads, the book's choice for a two-vCPU budget.
 - The version the route reports is the suffix of the adapter's name.
+
+The hand-off holds or fails in the route, so the route computes the flag.
 
 **Working rule:** Run one model per worker process, built with the thread count you have measured for your machine. Keep two threads per worker, as this book does, until your own measurement says otherwise. Count the worker processes before you count the model's memory on the machine, and keep `--reload` and `--workers` apart. Watch the hand-off rate the route returns, beside its errors, from the first day the route serves messages.

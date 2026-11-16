@@ -6,7 +6,7 @@ chapter_id: choose-a-base-model
 
 By the end of this chapter, you can name the two base models this book keeps, load each one at its pinned revision, and count what one routing message costs in tokens and parameters before you commit to a model.
 
-Before a message in the bank's support inbox reaches one of 77 teams, a model reads it and picks the team, and the model the router starts from sets what that costs. The router is the whole system that [chapter 1](route-a-message) builds, and this chapter chooses the small open model under it. [Chapter 2](measure-the-routing-task#dev-test-and-fixed-samples) fixed the samples that the router is measured on. It chooses by cost first, because the bank can count what a message costs before it builds anything around the model.
+Every message in the bank's support inbox costs something to route: a model reads it and picks its team, and the model the router starts from sets what that costs. The router is the whole system that [chapter 1](route-a-message) builds, and this chapter chooses the small open model under it. [Chapter 2](measure-the-routing-task#dev-test-and-fixed-samples) fixed the samples that the router is measured on. This chapter chooses by cost first, because the bank can count what a message costs before it builds anything around the model.
 
 ## Which candidates we keep {#the-candidates-and-what-we-keep}
 
@@ -47,7 +47,7 @@ One example loads both kept models from the files the runtime fetched and checke
 
 [Example: load-both-models-offline](../examples/load-both-models-offline.py)
 
-A parameter is one of the numbers the model learns during training, and a layer is one of the stacked blocks that a token passes through. Parameters and layers are the only two sizes this chapter uses. The 360M is the larger of the two. The first output line gives each model's parameter count, rounded to whole millions: {{out:load-both-models-offline:parameters, millions, rounded}}. The second line gives the layer counts, {{out:load-both-models-offline:layers}}, in the same order. Speed is not among them, because a time depends on the machine. The `throughput` recording measures the classifier and its int8 copy against the stand-in on a named machine ([chapter 7](quantize-and-measure#measure-speed-in-a-recording) says how, and [chapter 10](when-a-small-model-is-the-wrong-choice#count-the-bill-and-the-machine) reports the ratios), and this chapter gives no time.
+A parameter is one of the numbers the model learns during training, and a layer is one of the stacked blocks that a token passes through. Parameters and layers are the only two sizes this chapter uses. The 360M is the larger of the two. The first output line gives each model's parameter count, rounded to whole millions: {{out:load-both-models-offline:parameters, millions, rounded}}. The second line gives the layer counts, {{out:load-both-models-offline:layers}}, in the same order. Speed is not among them, because a time depends on the machine. The `throughput` recording measures the classifier and its int8 copy against the stand-in on a named machine ([chapter 7](quantize-and-measure#measure-speed-in-a-recording) says how, and [chapter 10](when-a-small-model-is-the-wrong-choice#count-the-bill-and-the-machine) reports the ratios). The recording does not measure the 360M.
 
 The counts come from loading the models here, not from their cards.
 
