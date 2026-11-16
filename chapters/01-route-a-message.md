@@ -6,13 +6,15 @@ chapter_id: route-a-message
 
 By the end of this chapter, you can build a router that returns a team, a confidence and a hand-off flag for one message, score it on a fixed sample by three measures, and see why an untrained small model, prompted as it stands, can't be the router's first version.
 
-Customer messages to a bank land in one support queue, which this book calls the inbox, and the inbox sends each message to one of {{out:count-the-splits:labels}} teams. The trouble is that a router which picks a team for every message will sometimes pick the wrong one. A team is a label the router can return, such as `card_arrival`, and it is never a group of people. The people who read messages are the bank's support staff, and a message the router cannot send on goes to one of them.
+Customer messages to a bank land in one support queue, which this book calls the inbox. The bank is the only name this book uses for the organisation. A router sends each message in the inbox to one of {{out:count-the-splits:labels}} teams, and a router that picks a team for every message will sometimes pick the wrong one. A wrong team costs the customer time, and it costs support staff a step to pass the message on. This chapter builds a router that says when it is unsure.
 
-The labels come from BANKING77, a public dataset of customer messages to a bank, published under [CC BY 4.0](https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/LICENSE). BANKING77 calls each label an intent. This book calls it a team from here on, and the labels are written as they appear in the dataset. The bank is the only name this book uses for the organisation.
+A team is a label the router can return, such as `card_arrival`, and it is never a group of people. The people who read messages are the bank's support staff, and a message the router cannot send on goes to one of them.
 
-You need Python and one call to a hosted model's API, which you may already have written. This chapter does not ask you to know how a transformer works inside. Where an internal matters, it gets one sentence.
+The messages and their teams come from BANKING77, a public dataset of customer messages to a bank, published under [CC BY 4.0](https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/LICENSE). BANKING77 calls each label an intent. This book calls it a team from here on, and the labels are written as they appear in the dataset.
 
 The router is the whole system: a model, a prompt, a threshold and the code that sends a message on. This chapter builds a rough router. It is rough because its threshold is a placeholder and its model is a stand-in, and it is a working router because it returns an answer for every message and can be scored on every output. The sections build it in the order you would, then measure it, then show what breaks.
+
+You need Python and one call to a hosted model's API, which you may already have written. This chapter does not ask you to know how a transformer works inside. Where an internal matters, it gets one sentence.
 
 Two shared pieces come first. The first is a recording of a stand-in model's answers to the test messages, which [the section on asking a model](#ask-a-model-for-one-team) introduces. Most examples read those answers offline, and one runs a small model live, in [the section that shows its failure](#show-what-a-small-model-does-first). The second is `router_lib`, a shared module in the book's `examples` folder. It holds the team labels, the router prompt, the hand-off rule and the measures. Every example imports it, so a function means the same thing in every chapter.
 
@@ -28,13 +30,13 @@ In this chapter, the confidence has a narrow meaning. It is the probability llam
 | Confidence | The probability llama-cpp-python returns for the constrained answer, as a score | The hand-off rule |
 | Hand-off flag | True when the confidence is below the threshold | The person who takes the message |
 
-The flag matters most, and the reason is operational. A router that always returns a team sends every message somewhere, including the messages it has no basis to route. A wrong team costs the customer time, and it costs support staff a step to pass the message on. A hand-off gives the message to a person who can route it, and a router that says when it is unsure makes that person's work visible. We recommend that every router return the flag in every answer, true or false, so that each measure in the sections below can be computed from the output alone.
+The flag matters most, and the reason is operational. A router that always returns a team sends every message somewhere, including the messages it has no basis to route. A hand-off gives the message to a person who can route it, and a router that says when it is unsure makes that person's work visible. We recommend that every router return the flag in every answer, true or false, so that each measure in the sections below can be computed from the output alone.
 
-This idea has a name in the research literature: selective classification, or the reject option. Geifman and El-Yaniv's 2017 preprint on deep networks describes the trade. A classifier that declines some inputs covers fewer of them, and the techniques can improve a deep network's predictions on the inputs it keeps. Their method also lets a user set a target level of risk. The hand-off rule in this book does not do that. It picks a threshold on held-out data, and it gives no guarantee about the risk that remains. The source is [Geifman and El-Yaniv (2017), arXiv:1705.08500](https://arxiv.org/abs/1705.08500).
+This idea has a name in the research literature: selective classification, or the reject option. [Geifman and El-Yaniv's 2017 preprint on deep networks](https://arxiv.org/abs/1705.08500) describes the trade. A classifier that declines some inputs covers fewer of them, and the techniques can potentially and significantly improve a deep network's predictions on the inputs it keeps, by giving up coverage. Their method also lets a user set a target level of risk. The hand-off rule in this book does not do that. It picks a threshold on held-out data, and it gives no guarantee about the risk that remains.
 
 The measurements in this chapter return teams only to be scored. The one-message example, in [the hand-off section](#hand-off-the-unsure-messages), returns a team only when the flag is false.
 
-**Working rule:** Return the flag with every team, and send a message to a person whenever the flag is true. Return the team to the caller only when the flag is false. Do not remove the flag to make a router look more complete, because the flag is what the hand-off measure counts.
+**Working rule:** Return the flag with every team, and send a message to a person whenever the flag is true. Return the team to the caller only when the flag is false. Keep the flag even when removing it would make a router look more complete, because the hand-off measure counts it.
 
 ## Ask a model for one team {#ask-a-model-for-one-team}
 
@@ -52,27 +54,27 @@ A reader who has a model of their own can record its answers the same way. You w
 
 [Example: record-your-own-answers](../examples/record-your-own-answers.py)
 
-Run this one to check the writer before you trust your own recording. Its stand-in function reads the stored answers, so the check tests `record_answers` and not a model. It writes {{out:record-your-own-answers:messages written}} messages and reports {{out:record-your-own-answers:lines matching the recording}} lines matching the recording. When you swap that function for a call to your own model, the same check shows whether your recording has the same shape as the stand-in's.
+Before you trust your own recording, check `record_answers` on the stand-in's answers. Its stand-in function replays the recording, so the check tests `record_answers` and not a model. Every line it writes matches the recording, all {{out:record-your-own-answers:messages written}} of them. When you swap that function for a call to your own model, the same check shows whether your recording has the same shape as the stand-in's.
 
-**Working rule:** Score every model on the same fixed sample, and record its answers with `record_answers` before you compare it with the stand-in. Say which sample each score is on. Do not set one model's score beside another's when their samples differ.
+**Working rule:** Score every model on the same fixed sample, and record its answers with `record_answers` before you compare it with the stand-in. Say which sample each score is on, and set two scores side by side only when their samples match.
 
 ## Hand off the unsure messages {#hand-off-the-unsure-messages}
 
-The stand-in's answers give each message a confidence, and this section turns that confidence into the hand-off flag.
+[The stand-in](#ask-a-model-for-one-team)'s answers give each message a confidence, and this section turns that confidence into the hand-off flag.
 
 The hand-off rule is one comparison. `handoff(confidence, threshold)` returns true when the confidence is below the threshold, and false when it is equal to the threshold or above it. A message that is handed off goes to a person. A message that is not handed off goes to the team the router named. Every route in this book that returns a team to a caller uses this function, so no caller can receive a team without the decision having been made.
 
-The rule is simple to read, and the work is in choosing the number. This chapter uses a placeholder threshold, {{out:route-recorded-answers:placeholder threshold}}, and every output that uses it says so. A placeholder has no rule behind it. It is a number that lets the rule run, and it does not tell you whether any decision the rule makes was right.
+The rule is simple to read, and the work is in choosing the number. This chapter uses a placeholder threshold, {{out:route-recorded-answers:placeholder threshold}}, and every output that uses it says so. A placeholder has no rule behind it. It is a number that lets the rule run.
 
 Chapter 5 chooses the threshold on the dev split, by a rule stated there. It records the chosen value in the adapter's manifest, so a reader can see which threshold a result used and what it was chosen on. The test sample is never used to choose it. Until then, the placeholder is the only threshold this chapter has, and its results are for teaching the measures, not for judging the router.
 
-The hand-off rate is the share of messages that go to a person, and it moves with the threshold. A higher threshold hands off more messages and keeps fewer. A lower threshold keeps more messages, and it hands off fewer. The trade-off is the reason the choice is a measured one. Chapter 5 shows the trade-off on the dev split, at more than one setting, before it picks one.
+The hand-off rate is the share of messages that go to a person, and it moves with the threshold. Raise the threshold and more messages go to people; lower it and more go straight to a team. The trade-off is the reason the choice is a measured one. Chapter 5 shows the trade-off on the dev split, at more than one setting, before it picks one.
 
 [Example: route-one-message](../examples/route-one-message.py)
 
-Run this to see one route from start to finish. It takes the first message of `test_40`, reads the stand-in's recorded answer for it, and routes it through `handoff` at the placeholder threshold. It prints the team, the confidence rounded to two places and whether the message was handed off, and it never prints the message's text. For this message the confidence is {{out:route-one-message:confidence}}, which clears the placeholder, so the router keeps the message and returns its team, {{out:route-one-message:team}}. The script asserts that the message is not handed off. One message shows the shape of the output, and nothing about how often the router is right.
+Follow one message through the whole route, from the recorded answer to a printed team. The example takes the first message of `test_40`, reads the stand-in's recorded answer for it, and routes it through `handoff` at the placeholder threshold. It prints the team, the confidence rounded to two places and whether the message was handed off, and it never prints the message's text. This message's confidence is {{out:route-one-message:confidence}}, which clears the placeholder, so the router keeps the message and returns its team, {{out:route-one-message:team}}. The script asserts that the message is not handed off. One message shows the shape of the output. It can't show how often the router is right.
 
-**Working rule:** Choose the threshold on the dev split, never on the test sample, and report the hand-off rate beside accuracy every time. While the threshold is a placeholder, say so in each output, and do not present its accuracy as the router's result.
+**Working rule:** Choose the threshold on the dev split, never on the test sample, and report the hand-off rate beside accuracy every time. While the threshold is a placeholder, say so in each output, and keep its accuracy out of any claim about the router's result.
 
 ## Score the router on a fixed sample {#score-the-router-on-a-fixed-sample}
 
@@ -88,33 +90,33 @@ Each measure answers a different question. Accuracy asks how often the router is
 
 [Example: route-recorded-answers](../examples/route-recorded-answers.py)
 
-Run this to get all three measures on the sample. It reads the recorded answers, applies the placeholder threshold to their confidences, and prints each measure with its count. The line to watch is the accuracy on messages not handed off, because it is the accuracy of the messages a team actually receives.
+Here are the three measures on the sample, at [the placeholder threshold](#hand-off-the-unsure-messages). The example reads the recorded answers, applies the threshold to their confidences, and prints each measure with its count. The line to watch is the accuracy on messages not handed off, because it is the accuracy of the messages a team actually receives.
 
-Read together, the three measures say that the placeholder does not protect the teams. The router is right on {{out:route-recorded-answers:accuracy}} of the sample, which no team should accept on its own. The threshold hands off only {{out:route-recorded-answers:handed off}} of the messages, so most of the sample reaches a team. Those kept messages are routed right at {{out:route-recorded-answers:accuracy on messages not handed off}}, only a little above the accuracy on the whole sample. That is the result this section was built to show: a router that returns a team for every message is not yet one the bank can use.
+Read together, the three measures say that the placeholder does not protect the teams. The router is right on {{out:route-recorded-answers:accuracy}} of the sample, which no team should accept on its own. The threshold hands off only {{out:route-recorded-answers:handed off}} of the messages, so most of the sample reaches a team. Those kept messages are routed right at {{out:route-recorded-answers:accuracy on messages not handed off}}, only a little above the accuracy on the whole sample. A router that returns a team for every message is not yet one the bank can use.
 
 A sample this small can show that a router fails, and it can show how the measures move. It cannot tell two routers apart with confidence. Chapter 2 sets out the larger samples, and chapter 5 measures its chosen threshold on the same kind of sample.
 
-**Working rule:** Report accuracy, the hand-off rate and the accuracy on messages not handed off together, each with its count, on the same fixed sample. Do not report one of them alone, and do not compare a router measured on one sample with a router measured on another.
+**Working rule:** Report accuracy, the hand-off rate and the accuracy on messages not handed off together, each with its count, on the same fixed sample, and compare two routers only when both were measured on that sample.
 
 ## Show what a small model does first {#show-what-a-small-model-does-first}
 
 The obvious shortcut is to drop [the stand-in](#ask-a-model-for-one-team) and ask a small model directly. SmolLM2-135M-Instruct is the smallest model in the family that this book keeps, and it is the core model for the rest of the book. It runs on a CPU and loads offline from its pinned revision. If it answered with a team name, the router would need no recording at all, so the shortcut is worth testing before anything else is built on it.
 
-The test asks the model the same question the router would ask. The model gets the router prompt for the first 20 messages of the sample, with no constraint on its answer and a cap of a few tokens. Run the check to count how many of its answers are team names, printed beside the number of messages asked.
+The test asks the model the same question the router would ask. The model gets the router prompt for the first 20 messages of the sample, with no constraint on its answer and a cap of a few tokens. Make a guess first: how many of those answers will be team names, with nothing holding the model to the list? Then count them.
 
 [Example: unconstrained-first-try](../examples/unconstrained-first-try.py)
 
-None of the model's answers is a team: {{out:unconstrained-first-try:answers that are a team name}} answers that are team names, so the router has nothing to send to a team. The measurement keeps the answers and never returns them to a caller, which is our rule for any measurement that is not itself a router.
+None of the model's answers is a team name, so the router has nothing to send to a team. The measurement keeps its answers and never returns them to a caller.
 
 This failure does not show that a small model can never route. It shows that this model, asked this way, does not return a team. There are two different fixes, and we take them in order. Chapter 4 constrains the answer, so the model can only write a team name. Chapter 5 trains a head on the model, so each team gets a score from a single forward pass. This chapter does neither, which is why its router runs on the stand-in's recorded answers.
 
-**Working rule:** Before a model routes anything, count its answers that are team names on a fixed sample, and compare the count with the sample's size. If the model does not return a team for every message, do not route with it as it stands. Constrain its answer to the teams, or train it for the task. Do not put a hand-off rule on an answer that is not a team, because the team the rule protects does not exist.
+**Working rule:** Before a model routes anything, count its answers that are team names on a fixed sample, and compare the count with the sample's size. If the model does not return a team for every message, do not route with it as it stands. Constrain its answer to the teams, or train it for the task. A hand-off rule placed on an answer that is not a team protects a team that does not exist.
 
 ## Where a rough router breaks {#where-a-rough-router-breaks}
 
 A rough router breaks in four ways in production, and each one leaves a sign that support staff can see.
 
-The first is a team name that does not exist. A free-text model can write a team that is not on the list, or a sentence, and a router that sends that text on has sent the message to nobody. [The stand-in](#ask-a-model-for-one-team)'s recording cannot do this, because its grammar allows only the labels, but a reader's model can. The sign is an answer that is not a team name, and [the unconstrained test](#show-what-a-small-model-does-first) counts how many answers are. A router should treat such an answer as an error, count it, and send the message to a person. `record_answers` already raises an error for that case, and the router must do the same. Chapter 4 fixes the cause by constraining the answer.
+The first is a team name that does not exist. A free-text model can write a team that is not on the list, or a sentence, and a router that sends that text on has sent the message to nobody. [The stand-in](#ask-a-model-for-one-team)'s recording cannot do this, because its grammar allows only the labels, but a reader's model can. The sign is an answer that is not a team name, and [the unconstrained test](#show-what-a-small-model-does-first) counts the answers that are team names. A router should treat such an answer as an error, count it, and send the message to a person. `record_answers` already raises an error for that case, and the router must do the same.
 
 The second is drift. The stand-in's answers hold only for the file, the prompt and the sample they were recorded with. The recording's manifest names the file's SHA-256, the prompt's hash, the decoding and the sample, so a change to any one of them is a different recording. A reader who sees a score move with no change to the code should compare the manifest first, and then the prompt.
 

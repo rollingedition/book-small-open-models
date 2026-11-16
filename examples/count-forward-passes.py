@@ -31,10 +31,12 @@ def count_passes(model, run):
 
 
 tokenizer, causal = router_lib.load_model(SMALL)
-# Some tokenizers have no pad token. The end token stands in, so padding has an id.
+# SmolLM2's tokenizer sets a pad token; this line keeps the example working with one that doesn't.
 tokenizer.pad_token = tokenizer.pad_token or tokenizer.eos_token
+# The trie holds each team name's tokens, so constrained_team can write only a team name, one token per pass, then the end token.
 trie = router_lib.build_trie(tokenizer)
 # The pinned commit from models.toml, and the float32 weights and eager attention that load_model also sets.
+# The head is new, with one score per team (77), and untrained here; only the pass count matters.
 classifier = AutoModelForSequenceClassification.from_pretrained(
     SMALL, revision=router_lib._pins()[SMALL], num_labels=len(router_lib.LABELS),
     dtype=torch.float32, attn_implementation="eager",

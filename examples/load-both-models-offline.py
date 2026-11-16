@@ -1,4 +1,4 @@
-"""Load the 135M and 360M SmolLM2 models at their pins, offline, and print each one's parameter count and layer count. The chapter's size claims rest on the parameter line, which is rounded to whole millions."""
+"""Load the 135M and 360M SmolLM2 models at their pins, offline, and print each one's parameter count and layer count. The chapter's size claims rest on both lines; the parameter line is rounded to whole millions."""
 
 import os
 
@@ -20,7 +20,7 @@ MEDIUM = "HuggingFaceTB/SmolLM2-360M-Instruct"
 
 def size(model):
     """Return (parameter count in millions, rounded to a whole number) and the layer count."""
-    # parameters() yields a tensor shared by two layers once, so a tied embedding and output head count once.
+    # parameters() yields a shared tensor once, so the tied embedding and output head count once.
     total = sum(p.numel() for p in model.parameters())
     return round(total / 1e6), model.config.num_hidden_layers
 
