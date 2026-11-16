@@ -1,5 +1,5 @@
-"""Route the first 6 messages of test_40 with the 360M model, decoding only team names, and count how many right answers that gives.
-The point rests on the printed count of answers that are team names, as in constrained-decode-135m, which uses the same six messages. The messages are read from the test split and are never printed."""
+"""Decode team names for the first 6 messages of test_40 with the 360M model, and count how many of them are right.
+The prose sets its accuracy line against the 135M model's, on the same six messages. The messages are read from the test split and are never printed."""
 
 import os
 
@@ -16,7 +16,7 @@ torch.set_num_threads(2)
 
 import router_lib  # noqa: E402
 
-# seeds 0 for random and torch, and deterministic algorithms, so greedy decoding repeats
+# seeds 0 for random and torch, deterministic algorithms and float32, so greedy decoding repeats
 router_lib.setup_runtime()
 
 MEDIUM = "HuggingFaceTB/SmolLM2-360M-Instruct"
@@ -32,7 +32,7 @@ teams = set(router_lib.LABELS)
 # (label index, team text); the index comes from the trie walk, not from parsing the text
 results = [router_lib.constrained_team(tokenizer, model, trie, rows[i][0]) for i in sample]
 valid = [text in teams for _, text in results]
-# rows[i][1] is the gold index, and the walk's index is compared with it
+# the walk's index, never the decoded text, is what counts
 right = [index == rows[i][1] for (index, _), i in zip(results, sample)]
 given = collections.Counter(text for _, text in results)
 # most given team; a tie in count goes to the team listed first

@@ -1,5 +1,5 @@
-"""Load the recorded adapter banking77-lora-v1 and score test_200 at its recorded hand-off threshold.
-Nothing is trained here: the adapter and its threshold come from the recording's manifest."""
+"""Load the recorded adapter banking77-lora-v1 and score test_200 at the threshold in its manifest, so nothing is trained here.
+The prose's point rests on the accuracy line and the hand-off lines printed beside it."""
 
 import os
 
@@ -17,7 +17,7 @@ import router_lib  # noqa: E402
 router_lib.setup_runtime()
 RECORDED = router_lib.HERE / "data" / "recorded" / "lora-full"
 manifest = json.loads((RECORDED / "manifest.json").read_text())
-threshold = manifest["handoff_threshold"]
+threshold = manifest["handoff_threshold"]  # the threshold the recording chose on dev; this script chooses none
 
 tokenizer, model = router_lib.load_classifier(RECORDED / "adapter")
 test = router_lib.read_rows("test")
@@ -32,7 +32,7 @@ print(f"handoff threshold from manifest: {threshold:.2f}")
 print(f"messages on test_200: {n}")
 print(f"accuracy on test_200: {result['correct']}/{n} ({result['accuracy']:.1%})")
 print(f"handed off: {result['handed_off']}/{n} ({result['handoff_rate']:.1%})")
-if result["accuracy_not_handed_off"] is None:
+if result["accuracy_not_handed_off"] is None:  # None when no message is kept, so there is no accuracy to print
     print("accuracy on messages not handed off: not defined (0 messages not handed off)")
 else:
     m = result["not_handed_off"]

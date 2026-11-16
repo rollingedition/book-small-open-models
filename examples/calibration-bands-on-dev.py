@@ -1,5 +1,5 @@
-"""Group the dev messages by the recorded adapter's confidence into five bands. For each band it prints the count,
-the accuracy and the mean confidence, the two quantities Guo et al. (2017) compare for calibration. Dev only."""
+"""Group the dev messages by the recorded adapter's confidence into five bands, and print each band's count, accuracy and mean confidence.
+The prose's point rests on those band lines read against each other, the comparison Guo et al. (2017) make for calibration; it uses dev only."""
 
 import os
 
@@ -26,7 +26,7 @@ print(f"dev messages: {len(dev)}")
 counted = 0
 for lo, hi in BANDS:
     last = hi == 1.0
-    members = [i for i, c in enumerate(confs) if lo <= c < hi or (last and c == 1.0)]
+    members = [i for i, c in enumerate(confs) if lo <= c < hi or (last and c == 1.0)]  # lower edges are in, upper edges out; the top band also takes 1.0, so each message is counted once
     counted += len(members)
     name = f"band {lo:.1f}-{hi:.1f}"
     print(f"{name} messages: {len(members)}")

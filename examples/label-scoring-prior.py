@@ -16,7 +16,7 @@ torch.set_num_threads(2)
 
 import router_lib  # noqa: E402
 
-# seeds 0 for random and torch, and deterministic algorithms, so greedy decoding repeats
+# seeds 0 for random and torch, deterministic algorithms and float32, so greedy decoding repeats
 router_lib.setup_runtime()
 
 SMALL = "HuggingFaceTB/SmolLM2-135M-Instruct"

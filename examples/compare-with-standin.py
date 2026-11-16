@@ -1,5 +1,5 @@
-"""Compare the stand-in's recorded answers with the recorded adapter's live predictions on test_200.
-Both models score the same 200 messages. The stand-in's threshold is chapter 1's placeholder."""
+"""Compare the stand-in's recorded answers with the recorded adapter's live predictions on the same 200 test messages.
+The prose's point rests on the last two lines, which count the messages each model gets right and the other gets wrong."""
 
 import os
 
@@ -27,7 +27,7 @@ test = router_lib.read_rows("test")
 sample = router_lib.read_sample("test_200")
 golds = [test[i][1] for i in sample]
 standin_preds = [answers[i]["label"] for i in sample]
-standin_confs = [math.exp(answers[i]["logprob"]) for i in sample]
+standin_confs = [math.exp(answers[i]["logprob"]) for i in sample]  # the recording stores log-probabilities; exp turns one back into the probability its answer had
 
 tokenizer, model = router_lib.load_classifier(ADAPTER / "adapter")
 adapter_preds, adapter_confs = router_lib.classify(model, tokenizer, [test[i][0] for i in sample])

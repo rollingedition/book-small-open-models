@@ -15,7 +15,7 @@ torch.set_num_threads(2)
 
 import router_lib  # noqa: E402
 
-# seeds 0 for random and torch, and deterministic algorithms, as in the other examples
+# seeds 0 for random and torch, deterministic algorithms and float32, as in the other examples
 router_lib.setup_runtime()
 
 ANSWERS = Path(__file__).resolve().parent / "data" / "recorded" / "prompting-eval" / "answers.jsonl"
