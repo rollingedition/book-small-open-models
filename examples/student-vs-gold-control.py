@@ -1,5 +1,7 @@
-"""Set the student banking77-distilled-v1 beside its control banking77-gold-1000-v1, which has the same recipe and the same
-1,000 training rows but gold labels, on the same test_200 messages. The point rests on the two counts of messages each adapter gets right that the other gets wrong, which need no threshold; the adapters are scored live, and nothing is trained."""
+"""Put the student banking77-distilled-v1 beside its control banking77-gold-1000-v1, which has the same recipe and the
+same 1,000 training rows but gold labels, on the same test_200 messages. The point rests on the two counts of messages
+each adapter gets right that the other gets wrong, which need no threshold; both adapters are scored live, and nothing
+is trained."""
 
 import json
 import os
@@ -20,6 +22,7 @@ print(f"dev messages used: {DEV_N} of {len(router_lib.read_sample('dev'))}")
 
 test = router_lib.read_rows("test")
 sample = router_lib.read_sample("test_200")
+# sample holds test row positions; field 1 of a test row is its gold team, field 0 its text
 golds = [test[i][1] for i in sample]
 texts = [test[i][0] for i in sample]
 
@@ -39,8 +42,8 @@ n = len(golds)
 print(f"test_200 messages the student gets right and the control gets wrong: {sum(s and not c for s, c in zip(student, control))}/{n}")
 print(f"test_200 messages the control gets right and the student gets wrong: {sum(c and not s for s, c in zip(student, control))}/{n}")
 
-# Recipe sizes from the recorded manifests: the student and its control share rows and steps; the human-labelled adapter does not.
-# The adapter's manifest names its row count train_rows, not rows, which is why rows_key differs for it.
+# Recipe sizes from the recorded manifests: the student and its control share rows and steps;
+# the human-labelled adapter does not. Its manifest names its row count train_rows, not rows, which is why rows_key differs.
 for name, folder, rows_key in [
     ("banking77-distilled-v1", "distill-student", "rows"),
     ("banking77-gold-1000-v1", "gold-same-rows", "rows"),

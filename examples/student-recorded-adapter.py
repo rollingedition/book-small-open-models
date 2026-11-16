@@ -1,5 +1,6 @@
 """Score the distilled student banking77-distilled-v1 on test_200 beside the human-labelled adapter, with the student's
-threshold chosen on dev. The point rests on the student's accuracy line and the copy lines; the adapters are loaded and scored live, and nothing is trained."""
+threshold chosen on dev. The point rests on the student's accuracy line and its copy lines; both adapters are loaded
+and scored live, and nothing is trained."""
 
 import os
 
@@ -27,6 +28,7 @@ print(f"student threshold chosen on dev: {threshold:.2f}")
 
 test = router_lib.read_rows("test")
 sample = router_lib.read_sample("test_200")
+# sample holds test row positions; field 1 of a test row is its gold team, field 0 its text
 golds = [test[i][1] for i in sample]
 texts = [test[i][0] for i in sample]
 student_preds, student_confs = router_lib.classify(student, tokenizer, texts)

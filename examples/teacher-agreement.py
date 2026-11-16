@@ -1,5 +1,5 @@
 """Measure how often the teacher's label matches gold on the training rows it labelled, and its accuracy on test_200
-from its recorded answers. The point rests on the agreement line, read before any student is trained; the example reads recorded answers only."""
+from its recorded answers. The point rests on the agreement line; the example reads recorded answers only."""
 
 import os
 
