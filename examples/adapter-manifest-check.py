@@ -16,9 +16,10 @@ import router_lib  # noqa: E402
 
 router_lib.setup_runtime()
 RECORDED = router_lib.HERE / "data" / "recorded" / "lora-full"
-# check_adapter hashes manifest.json, the outputs and the LoRA settings; pinned is manifest.json's SHA-256 check against its pin
+# check_adapter hashes the manifest, the outputs and the LoRA settings; pinned is the manifest's digest matching its pin
 manifest, s_ok, s_n, f_ok, f_n, pinned = router_lib.check_adapter(RECORDED)
-base = router_lib.pinned_revision(manifest["model"]) == manifest["model_version"]  # the base pin in models.toml, against the manifest
+# the base pin in models.toml, compared with the manifest's base revision
+base = router_lib.pinned_revision(manifest["model"]) == manifest["model_version"]
 print(f"adapter: {manifest['adapter']}")
 print(f"base revision matches pin: {'yes' if base else 'no'}")
 print(f"manifest matches pin: {'yes' if pinned else 'no'}")
@@ -26,7 +27,7 @@ print(f"settings matching: {s_ok}/{s_n}")
 print(f"files matching: {f_ok}/{f_n}")
 print("route may load: " + ("yes" if base and pinned and s_ok == s_n and f_ok == f_n else "no"))
 with tempfile.TemporaryDirectory() as tmp:
-    # changes a manifest field that is neither a LoRA setting nor an output file, so only the manifest's digest can see it
+    # changes a manifest field that is neither a LoRA setting nor an output file, so only the manifest digest sees it
     threshold = router_lib.edited_copy(RECORDED, Path(tmp) / "threshold", "manifest.json", "handoff_threshold", 0.0)
     # adds a key that LoraConfig does not know, to the config the settings are read from
     extra = router_lib.edited_copy(RECORDED, Path(tmp) / "extra", "adapter/adapter_config.json", "future_key", 1)

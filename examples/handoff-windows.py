@@ -17,7 +17,8 @@ import router_lib  # noqa: E402
 
 router_lib.setup_runtime()
 RECORDED = router_lib.HERE / "data" / "recorded" / "lora-full"
-threshold = json.loads((RECORDED / "manifest.json").read_text())["handoff_threshold"]  # read from the manifest, not typed here
+# the threshold is read from the manifest, not typed here
+threshold = json.loads((RECORDED / "manifest.json").read_text())["handoff_threshold"]
 tokenizer, model = router_lib.load_classifier(RECORDED / "adapter")
 
 handed_dev, n_dev = router_lib.dev_handed_off(model, tokenizer, threshold)
@@ -26,7 +27,7 @@ print(f"dev hand-off rate (baseline): {handed_dev}/{n_dev} ({base:.1f}%)")
 print(f"drift rule: more than {router_lib.DRIFT_POINTS:.0f} points from the baseline")
 print("weeks 3 and 4: simulated replay of sample messages 51 to 100")
 test = router_lib.read_rows("test")
-# simulated=True (the default) adds weeks 3 and 4: messages 51 to 100, replayed lowest confidence first, ties by position
+# simulated=True (the default) adds weeks 3 and 4: messages 51 to 100, lowest confidence first, ties by position
 for w, (rows, preds, confs) in enumerate(router_lib.watch_weeks(model, tokenizer, threshold), 1):
     n = len(rows)
     handed = sum(router_lib.handoff(c, threshold) for c in confs)

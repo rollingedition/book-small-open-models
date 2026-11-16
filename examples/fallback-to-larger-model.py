@@ -16,7 +16,8 @@ import router_lib  # noqa: E402
 
 router_lib.setup_runtime()
 RECORDED = router_lib.HERE / "data" / "recorded" / "lora-full"
-threshold = json.loads((RECORDED / "manifest.json").read_text())["handoff_threshold"]  # read from the manifest, not typed here
+# the threshold is read from the manifest, not typed here
+threshold = json.loads((RECORDED / "manifest.json").read_text())["handoff_threshold"]
 tokenizer, model = router_lib.load_classifier(RECORDED / "adapter")
 test = router_lib.read_rows("test")
 standin = router_lib.standin_rows()  # a dict from test row index to the stand-in's answer, for the rows it answered
