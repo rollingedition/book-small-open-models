@@ -1,7 +1,5 @@
 """Route the first message of test_40 from the stand-in's recorded answer, at the placeholder threshold.
-The prose's point rests on the printed team and on "handed off: no": the message is kept, so its team goes to the
-caller. The assert below fails the run if a change hands this message off. No model runs here, and the message's text
-is never printed."""
+The prose reads the printed team and the hand-off line. No model runs here, and the message's text is never printed."""
 
 import os
 
@@ -26,8 +24,8 @@ RECORDING = router_lib.HERE / "data" / "recorded" / "standin-baseline" / "answer
 def route(row):
     """Return (team, confidence, handed off) for one recorded answer. The team is None when handed off."""
     confidence = math.exp(row["logprob"])  # the recording stores a log-probability; exp gives a probability
-    flag = router_lib.handoff(confidence, THRESHOLD)  # True when the confidence is below THRESHOLD
-    return (None if flag else row["team"]), confidence, flag  # None means no team goes to the caller
+    flag = router_lib.handoff(confidence, THRESHOLD)  # True below THRESHOLD, and for a NaN; equal to THRESHOLD is kept
+    return (None if flag else row["team"]), confidence, flag
 
 
 with open(RECORDING) as f:

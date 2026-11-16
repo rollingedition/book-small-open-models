@@ -120,11 +120,9 @@ The first is a team name that does not exist. A free-text model can write a team
 
 The second is drift. The stand-in's answers hold only for the file, the prompt and the sample they were recorded with. The recording's manifest names the file's SHA-256, the prompt's hash, the decoding and the sample, so a change to any one of them is a different recording. A reader who sees a score move with no change to the code should compare the manifest first, and then the prompt.
 
-The third is a threshold that stops fitting. A threshold chosen on one dev split can stop fitting when the mix of messages changes. The sign is a shift in the hand-off rate, or in accuracy on the messages kept, when the router is measured on new dev messages. Chapter 5 records the threshold with the dev split it was chosen on, so the bank can see what the number was fitted to, and can tell whether a shift in the messages explains a shift in the score.
+The third is a threshold that stops fitting. A threshold chosen on one dev split can stop fitting when the mix of messages changes. The sign is a shift in the hand-off rate, or in accuracy on the messages kept, when the router is measured on new dev messages. Chapter 5 records the threshold with the dev split it was chosen on, so the bank can see what the number was fitted to, and [chapter 9](version-watch-and-fall-back#watch-the-hand-off-rate) watches for the shift.
 
 The fourth is cost and the load on people. A hosted model bills each call. A router that the bank runs bills in compute on its own machine, and [chapter 3](choose-a-base-model#measure-what-one-message-costs) counts what one message costs in tokens and forward passes, while [chapter 10](when-a-small-model-is-the-wrong-choice#count-the-bill-and-the-machine) turns a recorded speed into a bill. Each hand-off is work for a person, and the hand-off rate is the share of that work. We recommend putting the hand-off rate on every report about the router, beside accuracy, so the cost of the flag is never left out.
-
-The fixes come in order. Chapter 4 fixes the first break by constraining the answer. Chapter 5 records the threshold with the dev split it was chosen on, and [chapter 9](version-watch-and-fall-back#watch-the-hand-off-rate) watches for the shift.
 
 The chapter made these decisions. Later chapters keep them, or change them and say why:
 

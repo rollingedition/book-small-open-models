@@ -1,6 +1,6 @@
 """Score the stand-in's recorded answers on test_40, with a placeholder hand-off threshold.
-The prose's point rests on the last printed line, accuracy on messages not handed off: the accuracy of the messages a
-team receives. No model runs here: the answers are read from the recording."""
+The last printed line, accuracy on messages not handed off, is the one the prose reads against the others: it is the
+accuracy of the messages a team receives. No model runs here, and the answers come from the recording."""
 
 import os
 
@@ -34,7 +34,7 @@ golds = [rows[i][1] for i in sample]  # element 1 of a test row is its gold labe
 preds = [answers[i]["label"] for i in sample]  # the recorded label is the team's position in LABELS, as the gold is
 confs = [math.exp(answers[i]["logprob"]) for i in sample]  # exp turns each recorded log-probability into a confidence
 
-# metrics applies the hand-off rule at THRESHOLD, then counts each measure and its denominator
+# metrics applies the hand-off rule at THRESHOLD; accuracy's denominator still includes handed-off messages
 result = router_lib.metrics(preds, golds, confs, THRESHOLD)
 n = result["n"]
 

@@ -1,6 +1,6 @@
 """Ask the 135M model for a team with the raw router prompt and no constraint, on the first 20 messages of test_40.
-The prose's point rests on the last printed line, the count of answers that are team names. The answers stay in this
-example and are never returned to a caller."""
+Look at the last printed line, which counts the answers that are exactly a team name. The answers stay in this file
+and are never returned to a caller."""
 
 import os
 

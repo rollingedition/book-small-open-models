@@ -1,6 +1,6 @@
 """Write a model's team answers in the stand-in's JSONL shape, then check the writer against the stand-in's recording.
-The prose's point rests on the last printed line: every line the writer produces matches the recording. The stand-in
-here reads the recorded answers, so no model runs."""
+The line to read is the last one printed, which counts the lines that match the recording. The stand-in here replays
+that recording, so no model runs."""
 
 import os
 
@@ -26,7 +26,7 @@ def record_answers(call_model, messages, path):
             team, logprob = call_model(text)
             if team not in router_lib.LABELS:
                 raise ValueError("the model returned a name that is not a team")
-            label = router_lib.LABELS.index(team)  # the team's position in LABELS, stored as the label
+            label = router_lib.LABELS.index(team)  # stored as the label, the same encoding as the gold labels
             row = {"index": index, "label": label, "team": team, "logprob": logprob}
             out.write(json.dumps(row) + "\n")
 
