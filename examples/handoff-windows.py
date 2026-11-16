@@ -1,6 +1,8 @@
 """Watch the router's hand-off rate week by week on a fixed, ordered sample of test_1001.
 
-Each week's rate is compared with the dev baseline by the drift rule in router_lib. Weeks 3 and 4 are a simulated replay of sample messages, labelled as such in the output."""
+Each week's rate is compared with the dev baseline by the drift rule in router_lib. The point rests on the "drift" lines
+beside the "dev hand-off rate (baseline)" line, and on the "lowest confidence" and "right" lines of weeks 3 and 4, which
+the output labels as a simulated replay of sample messages."""
 
 import os
 
@@ -17,23 +19,27 @@ import router_lib  # noqa: E402
 
 router_lib.setup_runtime()
 RECORDED = router_lib.HERE / "data" / "recorded" / "lora-full"
-threshold = json.loads((RECORDED / "manifest.json").read_text())["handoff_threshold"]
+threshold = json.loads((RECORDED / "manifest.json").read_text())["handoff_threshold"]  # read from the manifest, not typed here
 tokenizer, model = router_lib.load_classifier(RECORDED / "adapter")
 
+# routes every dev message once and counts the hand-offs: the baseline the watch compares each week with
 handed_dev, n_dev = router_lib.dev_handed_off(model, tokenizer, threshold)
 base = 100 * handed_dev / n_dev
 print(f"dev hand-off rate (baseline): {handed_dev}/{n_dev} ({base:.1f}%)")
 print(f"drift rule: more than {router_lib.DRIFT_POINTS:.0f} points from the baseline")
 print("weeks 3 and 4: simulated replay of sample messages 51 to 100")
 test = router_lib.read_rows("test")
+# simulated=True (the default) adds weeks 3 and 4: messages 51 to 100, replayed in order of confidence
 for w, (rows, preds, confs) in enumerate(router_lib.watch_weeks(model, tokenizer, threshold), 1):
     n = len(rows)
     handed = sum(router_lib.handoff(c, threshold) for c in confs)
     rate = 100 * handed / n
+    # the messages the router keeps, each with its gold team: test row i holds (text, gold team)
     kept = [(p, test[i][1]) for i, p, c in zip(rows, preds, confs) if not router_lib.handoff(c, threshold)]
     right = sum(p == g for p, g in kept)
     print(f"week {w} messages: {n}")
     print(f"week {w} handed off: {handed}/{n} ({rate:.1f}%)")
+    # abs makes the rule two-sided, so a fall in the rate drifts as a rise does
     print(f"week {w} drift: {'yes' if abs(rate - base) > router_lib.DRIFT_POINTS else 'no'}")
     print(f"week {w} lowest confidence: {min(confs):.3f}")
     print(f"week {w} right among messages not handed off: {right}/{len(kept)}")
