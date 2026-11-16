@@ -1,4 +1,4 @@
-"""Write a model's team answers in the stand-in's JSONL shape, then check the writer against the stand-in's recording.
+"""Write a model's team answers in the stand-in's JSONL shape, then check record_answers against the stand-in's recording.
 The line to read is the last one printed, which counts the lines that match the recording. The stand-in here replays
 that recording, so no model runs."""
 

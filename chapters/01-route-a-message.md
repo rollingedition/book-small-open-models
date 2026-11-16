@@ -6,7 +6,7 @@ chapter_id: route-a-message
 
 By the end of this chapter, you can build a router that returns a team, a confidence and a hand-off flag for one message, score it on a fixed sample by three measures, and see why an untrained small model, prompted as it stands, can't be the router's first version.
 
-Customer messages to a bank land in one support queue, which this book calls the inbox. The bank is the only name this book uses for the organisation. A router sends each message in the inbox to one of {{out:count-the-splits:labels}} teams, and a router that picks a team for every message will sometimes pick the wrong one. A wrong team costs the customer time, and it costs support staff a step to pass the message on. This chapter builds a router that says when it is unsure.
+Customer messages to a bank land in one support queue, which this book calls the inbox. The bank is the only name this book uses for the organisation. A router sends each message in the inbox to one of {{out:count-the-splits:labels}} teams. A router that picks a team for every message will sometimes pick the wrong one. A wrong team costs the customer time, and it costs support staff a step to pass the message on. This chapter builds a router that says when it is unsure.
 
 A team is a label the router can return, such as `card_arrival`, and it is never a group of people. The people who read messages are the bank's support staff, and a message the router cannot send on goes to one of them.
 
@@ -54,7 +54,7 @@ A reader who has a model of their own can record its answers the same way. You w
 
 [Example: record-your-own-answers](../examples/record-your-own-answers.py)
 
-Before you trust your own recording, check `record_answers` on the stand-in's answers. Its stand-in function replays the recording, so the check tests `record_answers` and not a model. Every line it writes matches the recording, all {{out:record-your-own-answers:messages written}} of them. When you swap that function for a call to your own model, the same check shows whether your recording has the same shape as the stand-in's.
+Before you trust your own recording, check `record_answers` on the stand-in's answers. Here the stand-in function replays the recording, so the check tests `record_answers` and not a model. Every line it writes matches the recording, all {{out:record-your-own-answers:messages written}} of them. When you swap that function for a call to your own model, the same check shows whether your recording has the same shape as the stand-in's.
 
 **Working rule:** Score every model on the same fixed sample, and record its answers with `record_answers` before you compare it with the stand-in. Say which sample each score is on, and set two scores side by side only when their samples match.
 
