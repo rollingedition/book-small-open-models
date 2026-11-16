@@ -21,6 +21,11 @@ starts = "hosted cost per month = messages"
 say = "Three formulas, one for each cost and one for capacity. The hosted cost is the messages times the sum of two products: the input tokens times the input price, and the output tokens times the output price, with both prices per token. The machine's cost is its hours times its hourly rate. The machine's capacity is its messages per second times the seconds in a month times its utilisation, the share of the month it is busy."
 
 [[tables]]
+section = "where-the-small-model-still-loses"
+starts = "| Prompted variant |"
+say = "A table of the three prompted variants, each with how many of the 200 messages of test_200 it gets right: SmolLM2-135M-Instruct on the raw prompt, {{out:prompting-on-test-200:135m-raw correct}}; SmolLM2-135M-Instruct on the chat template, {{out:prompting-on-test-200:135m-chat correct}}; and SmolLM2-360M-Instruct on the raw prompt, {{out:prompting-on-test-200:360m-raw correct}}."
+
+[[tables]]
 section = "choose-with-a-table"
 starts = "| Question |"
-say = "A table of questions, with three columns of answers: what a small router looks like on each, what a hosted model looks like, and what to count on your own inbox. The questions are whether the messages must stay on the bank's machines, whether every answer must be a team, how often the team list changes, how many messages a month there are, how many labelled messages each team has, and whether the task needs open text or broad knowledge. The last column says which rows are requirements to decide first and which are counts."
+say = "A table of questions, with three columns of answers: what a small router looks like on each, what a hosted model looks like, and what to count on your inbox. The questions are whether the messages must stay on the bank's machines, whether every answer must be a team, how often the team list changes, how many messages a month there are, how many labelled messages each team has, and whether the task needs open text or broad knowledge. The last column says which rows are requirements to decide first and which are counts."

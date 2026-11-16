@@ -6,9 +6,9 @@ chapter_id: prompt-and-constrain
 
 By the end of this chapter, you can write a router prompt for a small open model, constrain its answer so that it can only be a team name, and measure how many of those answers are right. You will also see why a valid answer is not a correct one, which is why the next chapter trains a model instead of asking it better questions.
 
-A bank's support inbox, which this book calls the inbox, sends each message to one of 77 teams. [Chapter 1](route-a-message) asked a small model for one team in free text, and the model did not return teams. A router can send a message on only when the answer is a team, so this chapter first makes the model's answer a team by construction. It then runs the two open models from [chapter 3](choose-a-base-model), SmolLM2-135M-Instruct and SmolLM2-360M-Instruct, with one prompt and one constraint, and measures what they return. The 135M model is the one [chapter 5](fine-tune-with-lora) trains, so the counts here are the ones that training has to beat.
+A router needs every answer to be a team name, and when [chapter 1](route-a-message) let a small model answer in free text, the model did not return teams. This chapter first makes the answer a team by construction. It then runs the two open models from [chapter 3](choose-a-base-model), SmolLM2-135M-Instruct and SmolLM2-360M-Instruct, with one prompt and one constraint, and measures what they return. The 135M model is the one [chapter 5](fine-tune-with-lora) trains, so the counts here are the ones that training has to beat.
 
-Two kinds of number appear, and the chapter keeps them apart. The live examples run on the first six messages of `test_40`, the 40-message fixed sample of the test split that [chapter 1](route-a-message) uses, and the same six for both models. They show the mechanism. Six messages cannot separate two models, so the comparison uses a recording: each model and prompt answered all 200 messages of `test_200`, a fixed sample of 200 test messages that includes those six, once, and the answers were saved. The example that reads the recording loads no model. Its counts come from the saved answers and nothing else.
+Two kinds of number appear, and the chapter keeps them apart. The live examples run on the first six messages of `test_40`, the first 40 messages of the [fixed sample](measure-the-routing-task#dev-test-and-fixed-samples), and the same six for both models. They show the mechanism. Six messages cannot separate two models, so the comparison uses a recording: each model and prompt answered all 200 messages of `test_200`, the first 200 of that sample, which includes those six, once, and the answers were saved. Reading the recording loads no model, and its counts come from the saved answers and nothing else.
 
 ## The prompt, settled before any recording {#the-prompt-settled-before-any-recording}
 
@@ -16,7 +16,7 @@ Every example in this chapter uses one router prompt. It tells the model that th
 
 The list of teams in the prompt is the same list the constraint uses. The trie in the next section is built from the same label names in the same order, so the prompt and the constraint cannot disagree about which teams exist. The same dependency works the other way. A reader who adds or renames a team changes the prompt, and so changes the recording's hash. The counts in this chapter then no longer describe that prompt, and the reader must record again before comparing.
 
-The raw form passes that text to the model as it stands. The chat form wraps the same text in the model's chat template, which adds a default system prompt. The chat form runs in its own example on the same six messages:
+The raw form passes that text to the model as it stands. The chat form wraps the same text in the model's chat template, which adds a default system prompt. To see what the template changes, run the chat form on the same six messages:
 
 [Example: constrained-decode-135m-chat](../examples/constrained-decode-135m-chat.py)
 
@@ -46,9 +46,11 @@ Chapter 1's stand-in got the same guarantee from its library. `recordings/common
 
 Two details of that code shape the callback. The processor calls it as `self._prefix_allowed_tokens_fn(batch_id, sent)`, so the batch index comes first. And an empty list is an error: the processor raises `ValueError` when the callback returns no tokens. The book's callback therefore never returns an empty list. When no path can continue, it returns the end-of-answer token, and the answer stops there. That token is the model's `<|im_end|>`, which is also its pad token (id 2). The decoder stops after 32 new tokens (`max_new_tokens=32`). Every one of the 600 recorded answers ended on a team. A node with no children always holds a team, so the empty-list case is a guard and not a case the 77 names produce.
 
+First, the 135M model with the trie, on those six messages.
+
 [Example: constrained-decode-135m](../examples/constrained-decode-135m.py)
 
-The example prints {{out:constrained-decode-135m:answers that are a team}} answers that are team names, for {{out:constrained-decode-135m:messages}} messages. Every answer is a team, which is the guarantee the trie gives. The accuracy on the same messages is {{out:constrained-decode-135m:accuracy}}. The [measurement section](#measure-the-constrained-answers) takes that second number apart.
+Run on {{out:constrained-decode-135m:messages}} messages, the model's answers are team names in every case, {{out:constrained-decode-135m:answers that are a team}}, which is the guarantee the trie gives. The accuracy on the same messages is {{out:constrained-decode-135m:accuracy}}. The [measurement section](#measure-the-constrained-answers) takes that second number apart.
 
 The router does not read the team out of the text. `constrained_team` returns the index stored at the node where the walk ended, and the text is decoded only so that a reader can see it. The index is fixed by the trie and not by a parser that runs after the model. That is the reason the constraint is worth the code: a parser that matches text to teams can fail in ways the trie cannot. These examples return the team only so that it can be counted. Nothing in this chapter routes a message. A route returns a team only through `handoff`, which sends an uncertain answer to a person, and the examples here do not call it.
 
@@ -56,9 +58,9 @@ The router does not read the team out of the text. `constrained_team` returns th
 
 ## Decode greedily so every count repeats {#ties-and-determinism}
 
-Every example here uses greedy decoding: the highest score wins, and nothing is sampled. That matters for the counts. A sampled answer would differ from one run to the next, and then no printed count could be checked against a recording. The examples also fix their seeds in `router_lib.setup_runtime`, use float32 and set two threads, so on one machine a run repeats its answers. Each example calls `torch.set_num_threads(2)` itself, at the top, so that it does not depend on how its runner was started. Each example's printed output is compared with its recorded output on every run, and a changed line fails the check.
+Every example here uses greedy decoding: the highest score wins, and nothing is sampled. That matters for the counts. A sampled answer would differ from one run to the next, and then no printed count could be checked against a recording. The examples fix their seeds and float32 through `router_lib.setup_runtime` and set two threads, so on one machine a run repeats its answers. Each example calls `torch.set_num_threads(2)` itself, at the top, so that it does not depend on how its runner was started. Each example's printed output is compared with its recorded output on every run, and a changed line fails the check.
 
-Repeatable on one machine is not the same as repeatable everywhere. The PyTorch notes on reproducibility say: "Completely reproducible results are not guaranteed across PyTorch releases, individual commits, or different platforms" ([PyTorch {{version:torch}} notes on randomness](https://docs.pytorch.org/docs/2.15/notes/randomness.html)). So the book claims repeatability for the versions pinned in `examples/requirements.txt`, on the kind of machine the book ran on. A reader on another platform should expect to check the recorded lines again. If a recorded line fails there, read the changed line before touching the example. A different count of right answers can come from a different machine, a different library version or a changed prompt, and each of those needs a different fix.
+Repeatable on one machine is not the same as repeatable everywhere. The [PyTorch {{version:torch}} notes on randomness](https://docs.pytorch.org/docs/2.15/notes/randomness.html) say that completely reproducible results are not guaranteed across releases, individual commits or platforms. So the book claims repeatability for the versions pinned in `examples/requirements.txt`, on the kind of machine the book ran on. A reader on another platform should expect to check the recorded lines again. If a recorded line fails there, read the changed line before touching the example. A different count of right answers can come from a different machine, a different library version or a changed prompt, and each of those needs a different fix.
 
 Ties need a fixed rule as well. Label scoring in [the last section](#why-the-prior-wins) breaks a tie in score by the lower team index, through its sort key `(score, -index)`, and the most-given-team count breaks a tie in count by team name. Constrained decoding has no team scores. Its greedy step takes the first maximum among the allowed tokens, so a tie there goes to the lower token id.
 
@@ -66,7 +68,9 @@ Ties need a fixed rule as well. Label scoring in [the last section](#why-the-pri
 
 ## Measure the constrained answers {#measure-the-constrained-answers}
 
-The [live examples](#a-token-trie-allows-only-team-names) show the mechanism on six messages. The 135M model with the raw prompt got {{out:constrained-decode-135m:accuracy}} right, and the 360M model got {{out:constrained-decode-360m:accuracy}}. The 135M model's most common answer was {{out:constrained-decode-135m:most given team}}. The chat form on the same six messages got {{out:constrained-decode-135m-chat:accuracy}}. Six messages cannot rank these models: one right answer is the whole difference between 1/6 and 0/6.
+The [live examples](#a-token-trie-allows-only-team-names) cover six messages. The 135M model with the raw prompt got {{out:constrained-decode-135m:accuracy}} right, and the 360M model got {{out:constrained-decode-360m:accuracy}}. Six messages cannot rank these models: one right answer is the whole difference between those two counts. The 135M model's most common answer was {{out:constrained-decode-135m:most given team}}, and the chat form on the same six messages got {{out:constrained-decode-135m-chat:accuracy}}.
+
+The 360M run is the same program with the larger model.
 
 [Example: constrained-decode-360m](../examples/constrained-decode-360m.py)
 
@@ -78,17 +82,19 @@ For the comparison, each variant answered 200 messages. The recording's counts a
 | 135M, chat template | {{out:prompting-on-test-200:135m-chat answers outside the team list}} | {{out:prompting-on-test-200:135m-chat correct}} | {{out:prompting-on-test-200:135m-chat distinct teams given}} |
 | 360M, raw prompt | {{out:prompting-on-test-200:360m-raw answers outside the team list}} | {{out:prompting-on-test-200:360m-raw correct}} | {{out:prompting-on-test-200:360m-raw distinct teams given}} |
 
+This example reads the table's counts from the recording:
+
 [Example: prompting-on-test-200](../examples/prompting-on-test-200.py)
 
-The constraint does what it promises: no answer in any row is outside the team list. The 360M raw row has the most right answers, at {{out:prompting-on-test-200:360m-raw correct}}, and it gives {{out:prompting-on-test-200:360m-raw distinct teams given}} distinct teams where the 135M raw row gives {{out:prompting-on-test-200:135m-raw distinct teams given}}. Distinct teams alone mislead. The 135M raw row gives most of its answers to one team, {{out:prompting-on-test-200:135m-raw most given team}}, while the 360M raw row's most given team gets {{out:prompting-on-test-200:360m-raw most given team}}. No row is close to a router, and no row beats another by more than a few messages.
+No row is close to a router, though the constraint holds in every one: no answer in any row is outside the team list. The 360M raw row has the most right answers, at {{out:prompting-on-test-200:360m-raw correct}}, and no row beats another by more than a few messages.
 
-The outside-the-list line prints a count with no denominator, so the reader should take the 200 from the sample it describes. Every row answered the same 200 messages.
+Distinct teams alone mislead. The 135M raw row gives {{out:prompting-on-test-200:135m-raw distinct teams given}} distinct teams, against {{out:prompting-on-test-200:360m-raw distinct teams given}} for the 360M raw row, but most of the 135M row's answers go to one team, {{out:prompting-on-test-200:135m-raw most given team}}, while the 360M raw row's most given team gets only {{out:prompting-on-test-200:360m-raw most given team}}.
 
-To read a row, start with the first column. If it is not zero, the constraint has not held, and the other two columns mean nothing until that is fixed. The second column is the one that matters for routing: it counts the messages whose team is the gold label, out of the whole sample, with the wrong answers counted as wrong. The third column says how many teams the variant uses at all. A variant that gives only a few teams is either guessing a few popular teams or has learned something narrow, and the count does not say which. A large count does not rule out concentration either: the 135M raw row uses {{out:prompting-on-test-200:135m-raw distinct teams given}} teams and gives one of them most of its answers. A reader who runs the same three counts on a sample of their own messages gets a comparison on their own data, with the same meaning in each column.
+To read a row, start with the first column. If it is not zero, the constraint has not held, and the other two columns mean nothing until that is fixed. The second column is the one that matters for routing: it counts the messages whose team is the gold label, out of the whole sample, with the wrong answers counted as wrong. The third column says how many teams the variant uses at all. A variant that gives only a few teams is either guessing a few popular teams or has learned something narrow, and the count does not say which. A large count does not rule out concentration either, as the 135M raw row shows. A reader who runs the same three counts on a sample of their own messages gets a comparison on their own data, with the same meaning in each column.
 
 The 360M model is the larger of the two, and [chapter 3](choose-a-base-model) counted how much larger it is. The table shows what that cost buys on this prompt and this constraint: {{out:prompting-on-test-200:360m-raw correct}} right, against {{out:prompting-on-test-200:135m-raw correct}} for the 135M model on the same raw form. That is a few more messages for a larger model, and the chapter does not count it as a reason to pay for the extra size.
 
-The book does not compute an interval for these counts. A gap of a few messages out of 200 could come from the sample, so the table supports one statement: the three variants are close, and none of them is a router. A reader who wants to choose between two prompts should run both on a sample of their own messages and count the same three things.
+The book computes no interval for these counts, and a gap of a few messages out of 200 could come from the sample, so the table supports one statement: the three variants are close, and none of them is a router. A reader who wants to choose between two prompts should run both on a sample of their own messages and count the same three things.
 
 The trie checks the shape of the answer and nothing else. It does not read the message beyond the prompt, and it does not know which team is right. Any team that is on the list is allowed at every step where its name could still be written, so the decoder's choice among them is the model's choice, and the mask only decides which teams can be written at all.
 
@@ -106,13 +112,15 @@ The cost falls on the people who receive the message. A valid wrong team sends t
 
 Constrained decoding returns one answer and no scores. Label scoring gives every team a score. For each team, it sums the log-probability of the team's tokens after the prompt, where a log-probability is the logarithm of the probability the model gives a token. The highest sum is the model's top team for the message.
 
+Run it on three messages and read the top team of each:
+
 [Example: label-scoring-prior](../examples/label-scoring-prior.py)
 
-The example scores all 77 teams for {{out:label-scoring-prior:messages}} messages. The top team is the same for every one of them: the example prints {{out:label-scoring-prior:distinct top teams}} distinct top team, {{out:label-scoring-prior:most frequent top team name}}, which is top for {{out:label-scoring-prior:most frequent top team}}. That is the model's prior, the team it favours before any training. Three messages are too few to say more about it.
+Before any training, the model puts one team first for every message: {{out:label-scoring-prior:most frequent top team name}} tops {{out:label-scoring-prior:most frequent top team}} messages. That team is the model's prior, and three messages are too few to say more about it.
 
-If the top team is the same for every message, the score is the model's prior and says little about any one message. The 200-message recording shows the same prior in constrained decoding: the 135M raw row gives most of its answers to one team, {{out:prompting-on-test-200:135m-raw most given team}}, and that team is the gold team of {{out:prompting-on-test-200:135m-raw gold for most given team}} messages in the sample.
+If the top team is the same for every message, the score is the model's prior and says little about any one message. The 200-message recording shows the same prior in constrained decoding: {{out:prompting-on-test-200:135m-raw most given team}}, the 135M raw row's favourite, is the gold team of {{out:prompting-on-test-200:135m-raw gold for most given team}} messages in the sample.
 
-The sum favours short names. Each token of a team's name adds a log-probability, which is never above zero, so a team with more tokens has more terms to pull its total down. The example does not divide by length, and the chapter does not claim to correct for it. A reader who uses label scoring should check the top teams against a sample with gold labels before trusting them.
+The sum favours short names. Each token of a team's name adds a log-probability, which is never above zero, so a team with more tokens has more terms to pull its total down. The example adds the terms without dividing by length, and the chapter does not claim to correct for it. A reader who uses label scoring should check the top teams against a sample with gold labels before trusting them.
 
 Label scoring does give a score for each team, which is what a hand-off rule needs. Each message is scored against all 77 team names, which the code scores in one batch after the prompt runs once. Chapter 5 gets a score for each team from a single forward pass through a head that is trained on labelled messages. Label scoring is the bridge from this chapter to that one: it shows that the model already has per-team scores, and that before training they say little about the message.
 
@@ -122,11 +130,11 @@ Label scoring does give a score for each team, which is what a hand-off rule nee
 
 The rules in this chapter are scoped to these two models, this prompt and this constraint, on the 200 messages of the recording. A larger model, a different prompt or a longer sample could move the counts, and the book has not tested any of them on that sample. What the chapter does establish is narrower: with the raw prompt and the trie, a model of this size returns valid teams and few right ones, and the count of right ones is the number to watch.
 
-Each decision is tested in its own section: the prompt in the first, the trie in [its section](#a-token-trie-allows-only-team-names) and greedy decoding in [its section](#ties-and-determinism), and the two counts in the measurement section. A reader who changes any of them must record again before comparing, as the first section says.
+Each decision is tested in its own section: the prompt in the first, the trie in [its section](#a-token-trie-allows-only-team-names) and greedy decoding in [its section](#ties-and-determinism), and the two counts in the measurement section. A reader who changes any of them must record again before comparing, as the first section says. A constraint makes every answer valid, and only training can make it right.
 
 This chapter made these decisions:
 
 - The router prompt is the raw form, and both models in the comparison use it.
 - Constrained decoding uses a token trie over the 77 team names, with greedy decoding and fixed seeds.
 - Every variant is reported with its count of valid answers and its count of right answers, on one fixed sample.
-- The live examples show the mechanism on six messages (three for label scoring), and the comparison uses the recorded 200.
+- The live examples show how each piece works, and only the 200-message recording compares models.
