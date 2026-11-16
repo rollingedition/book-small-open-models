@@ -23,7 +23,7 @@ tokenizer = AutoTokenizer.from_pretrained(repo, revision=router_lib.pinned_revis
 
 test = router_lib.read_rows("test")         # each row is (message, gold label index)
 sample = router_lib.read_sample("test_200") # row numbers of the committed sample
-lengths = [len(tokenizer(test[i][0]).input_ids) for i in sample]  # no cut here: the length the message would have
+lengths = [len(tokenizer(test[i][0]).input_ids) for i in sample]  # full length in tokens, before any cut
 n = len(lengths)
 print(f"messages over 64 tokens: {sum(x > 64 for x in lengths)}/{n}")
 print(f"messages over 128 tokens where classify() cuts: {sum(x > 128 for x in lengths)}/{n}")
@@ -31,7 +31,7 @@ print(f"messages over 128 tokens where classify() cuts: {sum(x > 128 for x in le
 # The cut itself: repeat the text of the first test_200 message until it is longer than 128 tokens,
 # then tokenize it with classify()'s settings (truncation on, max_length 128).
 long_text = test[sample[0]][0]
-while len(tokenizer(long_text).input_ids) <= 128:
+while len(tokenizer(long_text).input_ids) <= 128:  # repeat the first message until it runs past the 128-token cut
     long_text = long_text + " " + test[sample[0]][0]
 before = len(tokenizer(long_text).input_ids)
 after = len(tokenizer(long_text, truncation=True, max_length=128).input_ids)  # the settings classify() passes

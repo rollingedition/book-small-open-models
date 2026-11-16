@@ -1,6 +1,7 @@
 """Hand each handed-off message to a person, with the larger model's recorded answer as a labelled suggestion.
 
-The stand-in never routes a message. The list of records stands in for the person's queue, which the book does not build."""
+The point rests on the "team returned for a handed-off message" line and on the "suggestions right" line beside it.
+The list of records stands in for the person's queue, which the book does not build."""
 
 import os
 

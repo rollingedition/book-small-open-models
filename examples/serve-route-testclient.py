@@ -16,7 +16,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 import router_lib  # noqa: E402
 
 router_lib.setup_runtime()                  # seeds, deterministic algorithms and float32, so the counts repeat
-client = TestClient(router_lib.make_app(router_lib.HERE / "data" / "recorded" / "lora-full"))  # checks the files first
+client = TestClient(router_lib.make_app(router_lib.HERE / "data" / "recorded" / "lora-full"))  # checks the files, loads the model once, and reads the hand-off threshold from the adapter's manifest
 
 test = router_lib.read_rows("test")         # each row is (message, gold label index)
 sample = router_lib.read_sample("test_40")  # row numbers of the committed sample
@@ -37,7 +37,7 @@ print(f"handed off, team is None: {sum(bodies[k]['team'] is None for k in unsure
 print(f"adapter: {bodies[0]['adapter']}")
 print(f"version: {bodies[0]['version']}")
 
-bad = client.post("/route", json={})        # no message field: FastAPI answers 422 with a list of errors
+bad = client.post("/route", json={})        # a body with no message field, which the route's body model requires
 detail_is_list = isinstance(bad.json()["detail"], list)
 assert detail_is_list, "a body with no message should get a 422 whose detail is a list"
 print(f"status on an empty body: {bad.status_code}")
