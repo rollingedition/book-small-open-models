@@ -1,5 +1,5 @@
-"""Choose the hand-off threshold on dev by the rule in the manifest, then check it against the manifest's value.
-The prose's point rests on the chosen-threshold line and the three threshold lines; test_200 is never used here."""
+"""Find the hand-off threshold on dev by the manifest's rule, then check it against the manifest's value.
+Read the chosen threshold beside the three threshold lines. test_200 is not read here."""
 
 import json
 
@@ -20,7 +20,7 @@ dev = router_lib.read_sample("dev")
 golds = [rows[i][1] for i in dev]
 preds, confs = router_lib.classify_by_length(model, tokenizer, [rows[i][0] for i in dev])  # batches by length to pad less; results come back in dev order
 n = len(dev)
-chosen = router_lib.choose_threshold(preds, golds, confs, TARGET)  # the rule lives in router_lib: the lowest 0.01 grid value that meets TARGET
+chosen = router_lib.choose_threshold(preds, golds, confs, TARGET)  # the rule lives in router_lib: the lowest 0.01 grid value that meets TARGET; None if no value meets it, and the prints below would then fail
 
 print(f"dev messages: {n}")
 print(f"target accuracy on messages not handed off: {TARGET:.2f}")

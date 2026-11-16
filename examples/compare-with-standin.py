@@ -1,5 +1,5 @@
-"""Compare the stand-in's recorded answers with the recorded adapter's live predictions on the same 200 test messages.
-The prose's point rests on the last two lines, which count the messages each model gets right and the other gets wrong."""
+"""Set the stand-in's recorded answers beside the recorded adapter's live predictions on the same 200 test messages.
+The last two lines count where the models disagree."""
 
 import os
 
@@ -16,11 +16,11 @@ torch.set_num_threads(2)
 import router_lib  # noqa: E402
 
 router_lib.setup_runtime()
-STANDIN_THRESHOLD = 0.5  # Placeholder from chapter 1. Chapter 5 chooses the threshold on dev.
+STANDIN_THRESHOLD = 0.5  # chapter 1's placeholder; the stand-in's own threshold is never chosen on dev
 ADAPTER = router_lib.HERE / "data" / "recorded" / "lora-full"
 
 with open(router_lib.HERE / "data" / "recorded" / "standin-baseline" / "answers.jsonl") as f:
-    answers = {row["index"]: row for row in map(json.loads, f)}
+    answers = {row["index"]: row for row in map(json.loads, f)}  # keyed by the test-row index that read_sample returns
 threshold = json.loads((ADAPTER / "manifest.json").read_text())["handoff_threshold"]
 
 test = router_lib.read_rows("test")

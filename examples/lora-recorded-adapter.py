@@ -1,5 +1,5 @@
-"""Load the recorded adapter banking77-lora-v1 and score test_200 at the threshold in its manifest, so nothing is trained here.
-The prose's point rests on the accuracy line and the hand-off lines printed beside it."""
+"""Load the recorded adapter banking77-lora-v1 and score test_200 at the threshold in its manifest; no training runs here.
+Read the accuracy line with the two hand-off lines printed under it."""
 
 import os
 
@@ -19,13 +19,13 @@ RECORDED = router_lib.HERE / "data" / "recorded" / "lora-full"
 manifest = json.loads((RECORDED / "manifest.json").read_text())
 threshold = manifest["handoff_threshold"]  # the threshold the recording chose on dev; this script chooses none
 
-tokenizer, model = router_lib.load_classifier(RECORDED / "adapter")
+tokenizer, model = router_lib.load_classifier(RECORDED / "adapter")  # the base model comes from the adapter's config, at its revision in models.toml
 test = router_lib.read_rows("test")
 sample = router_lib.read_sample("test_200")
 golds = [test[i][1] for i in sample]
-preds, confs = router_lib.classify(model, tokenizer, [test[i][0] for i in sample])
+preds, confs = router_lib.classify(model, tokenizer, [test[i][0] for i in sample])  # a tie goes to the lower label index
 
-result = router_lib.metrics(preds, golds, confs, threshold)
+result = router_lib.metrics(preds, golds, confs, threshold)  # a message is handed off when its confidence is below the threshold
 n = result["n"]
 print(f"adapter: {manifest['adapter']}")
 print(f"handoff threshold from manifest: {threshold:.2f}")

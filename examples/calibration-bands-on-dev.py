@@ -1,5 +1,5 @@
-"""Group the dev messages by the recorded adapter's confidence into five bands, and print each band's count, accuracy and mean confidence.
-The prose's point rests on those band lines read against each other, the comparison Guo et al. (2017) make for calibration; it uses dev only."""
+"""Group the dev messages into five bands by the adapter's confidence, and print each band's count, accuracy and mean confidence.
+Read the top band's mean confidence against its accuracy. Only dev is read."""
 
 import os
 
@@ -20,7 +20,7 @@ tokenizer, model = router_lib.load_classifier(RECORDED / "adapter")
 rows = router_lib.read_rows("train")
 dev = router_lib.read_sample("dev")
 golds = [rows[i][1] for i in dev]
-preds, confs = router_lib.classify_by_length(model, tokenizer, [rows[i][0] for i in dev])
+preds, confs = router_lib.classify_by_length(model, tokenizer, [rows[i][0] for i in dev])  # results come back in dev order, so index i matches golds[i]
 
 print(f"dev messages: {len(dev)}")
 counted = 0

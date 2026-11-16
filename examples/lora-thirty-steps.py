@@ -1,5 +1,5 @@
-"""Train the classifier for 30 steps on the recorded run's recipe, then score test_200 at the placeholder threshold.
-The prose's point rests on the three step losses and the hand-off line; the recording runs 1,125 steps."""
+"""Train for 30 steps on the recorded recipe, then score test_200 at the placeholder threshold of 0.5.
+Read the three step losses against the uniform-guess loss, then the hand-off line at that threshold. The recording runs 1,125 steps."""
 
 import math
 
@@ -14,13 +14,13 @@ REPO = "HuggingFaceTB/SmolLM2-135M-Instruct"
 STEPS, BATCH, SEED = 30, 8, 0
 
 train, order = router_lib.training_rows(SEED)  # the seed sets the shuffled order of the training rows, the one the recording used
-tok, model = router_lib.new_classifier(REPO)
+tok, model = router_lib.new_classifier(REPO)  # SmolLM2 with a 77-way head, LoRA rank 8, lora_alpha 16, on q_proj and v_proj
 lora, head = router_lib.parameter_split(model)  # LoRA tensors have "lora_" in their names; every other trainable tensor is the head
 print(f"trainable parameters: {lora + head}")
 print(f"LoRA parameters: {lora}")
 print(f"head parameters: {head}")
 
-losses = router_lib.train_steps(model, tok, train, order, STEPS, BATCH)
+losses = router_lib.train_steps(model, tok, train, order, STEPS, BATCH)  # AdamW at learning rate 1e-3, router_lib's default
 print(f"training steps: {STEPS}")
 print(f"batch size: {BATCH}")
 print(f"seed: {SEED}")

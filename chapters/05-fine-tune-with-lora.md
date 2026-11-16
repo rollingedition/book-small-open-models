@@ -16,7 +16,7 @@ The stand-in writes its answer as text, and a grammar limits that text to the 77
 
 The answer is an index into the 77 teams, so it is always one of them. [Chapter 4](prompt-and-constrain) reaches the same guarantee for a prompted model by constraining its text. This head never writes text, so it has nothing to constrain.
 
-A message costs one forward pass: one run of the network from input to scores, with no loop that writes tokens one at a time. The team and the confidence come from that same pass. This matters for the hand-off. The flag that sends a message to a person is computed from the same probabilities as the team it protects, so the two cannot drift apart between two calls.
+A message costs one forward pass: one run of the network from input to scores, with no loop that writes tokens one at a time. The team and the confidence come from that same pass. This matters for the hand-off. The flag that sends a message to a person is computed from the same probabilities as the team it protects, so the two cannot drift apart between two calls. A separate scoring call would need its own check that the two agree.
 
 The confidence here has a narrower meaning than the stand-in's. In chapter 1, a confidence was the probability the stand-in's recorded answer had, which is not a softmax over teams. In this chapter, it is the softmax probability of the chosen team. The two numbers are both called confidence, and both are compared with a threshold, but they are not the same quantity, so a threshold chosen for one is not a threshold for the other.
 
@@ -38,13 +38,13 @@ The adapter's manifest records the base model's revision, so a reader can check 
 
 ## Thirty steps are not enough {#thirty-steps-are-not-enough}
 
-Before the book uses a recording, it shows what a short run does with the same recipe. The run below takes {{out:lora-thirty-steps:training steps}} steps, at batch size {{out:lora-thirty-steps:batch size}} and seed {{out:lora-thirty-steps:seed}}, on the training rows outside dev, and then scores `test_200`, the first 200 entries of the shuffled test sample that [chapter 2](measure-the-routing-task#dev-test-and-fixed-samples) drew. It is a failure, and the book shows it as one.
+Before the book uses a recording, it shows what a short run does with the same recipe. The run below takes {{out:lora-thirty-steps:training steps}} steps, at batch size {{out:lora-thirty-steps:batch size}} and seed {{out:lora-thirty-steps:seed}}, on the training rows outside dev, and then scores `test_200`, the first 200 entries of the shuffled test sample that [chapter 2](measure-the-routing-task#dev-test-and-fixed-samples) drew. It is a failure, and the book shows it as one. The short run checks that the pipeline works from start to finish, and that is its only job here.
 
 [Example: lora-thirty-steps](../examples/lora-thirty-steps.py)
 
 Thirty steps are not enough to route with. The head this run trains gets {{out:lora-thirty-steps:accuracy on test_200}} right on `test_200`, and at the placeholder threshold it hands every message to a person: {{out:lora-thirty-steps:handed off at placeholder 0.50}}. A router that hands off every message gives no message to a team, so the labels it predicts never reach a caller. Because no message is kept, the accuracy on messages not handed off is not defined, as the output says.
 
-The loss does not fall steadily across the three printed steps: it is {{out:lora-thirty-steps:loss at step 10}} at step 10, {{out:lora-thirty-steps:loss at step 20}} at step 20, and {{out:lora-thirty-steps:loss at step 30}} at step 30. Step 20 is higher than step 10, and step 30 is lower than step 20 but higher than step 10. Three points from 30 steps are not a learning curve. The loss at step 30 sits close to the uniform guess of {{out:lora-thirty-steps:loss of a uniform guess over 77 teams}}, so at that point the head is still close to chance. The recording used in the section on the recorded adapter runs the same recipe for far more steps, and its accuracy is the one this book reports.
+The loss does not fall steadily across the three printed steps: it is {{out:lora-thirty-steps:loss at step 10}} at step 10, {{out:lora-thirty-steps:loss at step 20}} at step 20, and {{out:lora-thirty-steps:loss at step 30}} at step 30. Step 20 is higher than step 10, and step 30 is lower than step 20 but higher than step 10. Three points from 30 steps are not a learning curve. The loss at step 30 sits close to the uniform guess of {{out:lora-thirty-steps:loss of a uniform guess over 77 teams}}, so at that point the head is still close to chance. A uniform guess gives each team the same probability, one in 77, so its loss is the natural log of 77. The recording used in the section on the recorded adapter runs the same recipe for far more steps, and its accuracy is the one this book reports.
 
 Scoring `test_200` here only reports the failure, and nothing is chosen from it: the recipe is fixed before the run, and the threshold is chosen later on dev. To see whether training works, read the loss and the dev measures, not the test sample, which is the rule chapter 2 set for every sample. Tuning a recipe against the test sample leaves no clean number to report, and the sample stops being a test.
 
@@ -72,7 +72,7 @@ Take the adapter as it was recorded. A different recipe becomes a new run, named
 
 The recorded adapter is right on {{out:lora-recorded-adapter:accuracy on test_200}} of the messages, against {{out:prompting-on-test-200:135m-raw correct}} for the prompted 135M model that [chapter 4](prompt-and-constrain) measured on the same 200. The 30-step run, at {{out:lora-thirty-steps:accuracy on test_200}}, falls below the prompted model. A handed-off message counts as wrong when its team is wrong. The output beside this paragraph gives the hand-off count and the accuracy on messages not handed off, each with its count and denominator, as chapter 2 requires.
 
-The threshold is not chosen on this sample. It came from the manifest, which [the section on choosing the threshold](#choose-the-threshold-on-dev) explains. It is the threshold the recorded adapter's hand-off counts on `test_200` use: {{out:lora-recorded-adapter:handoff threshold from manifest}}.
+The threshold is not chosen on this sample. It came from the manifest, which [the section on choosing the threshold](#choose-the-threshold-on-dev) explains. It is the threshold the recorded adapter's hand-off counts on `test_200` use: {{out:lora-recorded-adapter:handoff threshold from manifest}}. Reading it from the manifest keeps the choice on dev, where the rule made it.
 
 The recorded adapter is the router's model, and the stand-in is the baseline. The two were measured with different thresholds, so their hand-off counts are not the same kind of result. Compare them on the same messages, with each threshold named beside its count. The comparison below does that for `test_200`, reading the stand-in's recorded answers for the same messages.
 
@@ -94,7 +94,7 @@ The threshold is the cut that sends a message to a person. Chapter 2 set its mea
 
 Scoring dev with the recorded adapter and applying the rule gives a threshold of {{out:choose-threshold-on-dev:chosen threshold}}. The check against the manifest's value prints {{out:choose-threshold-on-dev:chosen threshold matches manifest}}, and a mismatch would mean the manifest and the rule disagree.
 
-Three thresholds show the trade-off, and the table below sets them side by side, with each count and rate. Raising the threshold never hands off fewer messages, and the rule picks the lowest value that meets the target.
+Three thresholds show the trade-off, and the table below sets them side by side, with each count and rate. Raising the threshold never hands off fewer messages, and the rule picks the lowest value that meets the target. Each row is the same adapter on the same dev messages, so only the threshold changes.
 
 | Threshold | Handed off, on dev | Accuracy on messages not handed off, on dev |
 | --- | --- | --- |
@@ -106,7 +106,7 @@ At 0.50, the router keeps more messages, but its kept messages are less accurate
 
 What goes wrong in production is a change in the messages, not in the model. Suppose a product problem sends many messages about one team in one week. The threshold was chosen on the dev mix, so the hand-off rate can move while the adapter stays exactly the same. A rise in hand-offs with no change to the adapter is the sign to check the mix of messages first. Moving the threshold by eye until the hand-off rate looks right gives up the property the rule was chosen for: at least the target accuracy on the dev messages the router keeps.
 
-The confidence is not a probability that the team is right. [Guo et al. (2017)](https://arxiv.org/abs/1706.04599) report that their networks are "poorly calibrated", meaning their confidence does not match how often they are right. This book checks its own adapter on dev. The dev messages fall into five confidence bands, and each band gets a count, an accuracy and a mean confidence, the two quantities Guo et al. compare when they measure calibration.
+The confidence is not a probability that the team is right. [Guo et al. (2017)](https://arxiv.org/abs/1706.04599) report that their networks are "poorly calibrated", meaning their confidence does not match how often they are right. This book checks its own adapter on dev. The dev messages fall into five confidence bands, and each band gets a count, an accuracy and a mean confidence, the two quantities Guo et al. compare when they measure calibration. Grouping dev by confidence shows whether a 0.9 means nine in ten.
 
 [Example: calibration-bands-on-dev](../examples/calibration-bands-on-dev.py)
 
@@ -116,6 +116,6 @@ On dev the confidence orders the messages usefully, but at the top it runs above
 
 The bands cannot show more: the band from 0.2 to 0.4 holds {{out:calibration-bands-on-dev:band 0.2-0.4 messages}} messages. Every number here comes from the one dev sample that also chose the threshold, so none of them shows how calibrated the adapter will be on new messages.
 
-The router the rule chooses is an empirical cut on dev, recorded with its rule and data. A reader takes its hand-off rate and accuracy on kept messages as the router's result, and re-checks the dev rule when the mix of messages moves.
+The router the rule chooses is an empirical cut on dev, recorded with its rule and data. It is a cut, not a model of the messages, so its numbers describe the dev mix. A reader takes its hand-off rate and accuracy on kept messages as the router's result, and re-checks the dev rule when the mix of messages moves.
 
 **Working rule:** Choose the threshold on the dev split by the stated rule, and write its value and the rule into the adapter's manifest. Report the hand-off rate beside accuracy on the messages kept, each with its count, and show at least one setting either side of the chosen value. Check calibration on dev before you trust the confidence as a cut, and when the mix of messages changes, choose the threshold again on a fresh dev draw from the training file.
