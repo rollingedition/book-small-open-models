@@ -1,7 +1,5 @@
-"""Check an adapter's manifest and files before the route loads it, and show what the check does to two edited copies.
-The point rests on the "route may load" line for the recorded adapter, and on the two "refused by make_app" lines.
-check_adapter hashes manifest.json, each output file the manifest lists, and the three LoRA settings. make_app runs
-the same check before it loads a model."""
+"""Show what the adapter check does before a route loads an adapter, and what it does to two edited copies.
+The point rests on the "route may load" line and on the two "refused by make_app" lines."""
 import os
 
 os.environ["HF_HUB_OFFLINE"] = "1"
@@ -18,7 +16,8 @@ import router_lib  # noqa: E402
 
 router_lib.setup_runtime()
 RECORDED = router_lib.HERE / "data" / "recorded" / "lora-full"
-manifest, s_ok, s_n, f_ok, f_n, pinned = router_lib.check_adapter(RECORDED)  # pinned: manifest.json's SHA-256 equals its pin
+# check_adapter hashes manifest.json, the outputs and the LoRA settings; pinned is manifest.json's SHA-256 check against its pin
+manifest, s_ok, s_n, f_ok, f_n, pinned = router_lib.check_adapter(RECORDED)
 base = router_lib.pinned_revision(manifest["model"]) == manifest["model_version"]  # the base pin in models.toml, against the manifest
 print(f"adapter: {manifest['adapter']}")
 print(f"base revision matches pin: {'yes' if base else 'no'}")

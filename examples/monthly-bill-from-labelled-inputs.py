@@ -1,5 +1,5 @@
-"""The monthly bill for a hosted model and for the router on one machine, from inputs the reader sets. The last two
-cost lines, the hosted bill and the machine's bill, are the point the prose rests on. The prices, volume, machine cost
+"""The monthly bill for a hosted model and for the router on one machine, from inputs the reader sets. The hosted bill,
+the machine's bill and the cheaper-route line are the point the prose rests on. The prices, volume, machine cost
 and utilisation are example values, not published prices; the token counts are live and the router's rate is recorded."""
 
 import os

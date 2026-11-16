@@ -1,7 +1,5 @@
-"""Hand each handed-off message to a person, with the larger model's recorded answer as a labelled suggestion.
-
-The point rests on the "team returned for a handed-off message" line and on the "suggestions right" line beside it.
-The list of records stands in for the person's queue, which the book does not build."""
+"""Hand each handed-off message to a person, with the stand-in's recorded answer as a labelled suggestion.
+The point rests on the "team returned for a handed-off message" line and the "suggestions right" line."""
 
 import os
 
@@ -28,6 +26,7 @@ for weekly_rows, _, confs in router_lib.watch_weeks(model, tokenizer, threshold,
     rows += weekly_rows
     handed += [i for i, c in zip(weekly_rows, confs) if router_lib.handoff(c, threshold)]
 
+# the list of records stands in for the person's queue, which the book does not build
 # the suggestion is None where the stand-in has no recorded answer, and the team is always None
 queue = [{"index": i, "team": None, "suggestion": standin[i]["label"] if i in standin else None} for i in handed]
 suggested = [r for r in queue if r["suggestion"] is not None]

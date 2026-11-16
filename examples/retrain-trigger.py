@@ -1,8 +1,6 @@
-"""Decide whether to retrain, as a rule over the weekly hand-off counts from handoff-windows.
-
-The rule (the book's choice, not a sourced threshold): retrain when two consecutive weeks drift, that is, their
-hand-off rate is more than router_lib.DRIFT_POINTS from the dev baseline. The point rests on the "retrain trigger" line,
-which the output prints after the "longest run of drifting weeks" line. Weeks 3 and 4 are a simulated replay."""
+"""Decide whether to retrain, as a rule over the weekly drift flags from handoff-windows. The rule is the book's choice,
+not a sourced threshold: retrain when two consecutive weeks drift, that is, their hand-off rate is more than
+router_lib.DRIFT_POINTS from the dev baseline. The point rests on the "retrain trigger" line."""
 
 import os
 
@@ -30,7 +28,6 @@ for rows, _, confs in router_lib.watch_weeks(model, tokenizer, threshold):
     rate = 100 * sum(router_lib.handoff(c, threshold) for c in confs) / len(rows)
     flag = abs(rate - base) > router_lib.DRIFT_POINTS  # two-sided, as in the watch
     drifting.append(flag)
-    # run counts consecutive drifting weeks, and resets at the first week that does not drift
     run = run + 1 if flag else 0
     longest = max(longest, run)
     print(f"week {len(drifting)} drift: {'yes' if flag else 'no'}")

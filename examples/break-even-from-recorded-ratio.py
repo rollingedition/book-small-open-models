@@ -29,6 +29,7 @@ capacity = inputs["router_messages_per_second"] * 3600 * inputs["hours_per_month
 
 # The machine's bill is the same each month up to its capacity, so the hosted bill
 # equals it at messages = machine bill / hosted price per message.
+# Rounded up: the first whole message count at which the machine is no dearer.
 breakeven = math.ceil(machine_month / per_message)
 
 print(f"input tokens per message, hosted prompt (counted with SmolLM2-135M-Instruct, a stand-in tokenizer): {input_tokens}")
