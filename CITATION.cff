@@ -8,7 +8,7 @@ abstract: 'How to replace a hosted model with one you run for a single job, and 
 url: https://rollingedition.com/small-open-models
 repository-code: https://github.com/rollingedition/book-small-open-models
 license:
-- CC-BY-4.0
+- CC-BY-NC-4.0
 - MIT
 preferred-citation:
   type: book
