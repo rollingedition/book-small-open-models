@@ -48,9 +48,9 @@ Put together, the small models here did three things: a prompted model leaned on
 
 ## Count the bill and the machine {#count-the-bill-and-the-machine}
 
-A hosted model is paid per message. Its monthly bill is the number of messages times what one message costs, and one message costs its input tokens at the input price plus its output tokens at the output price. A price list written per million tokens gives the price per token when divided by one million. A routing message is long on the input side, because the prompt and the message are both counted, and short on the output side, because the answer is one team name.
+A hosted model is paid per message. A hosted model's monthly bill is the number of messages times what one message costs, and one message costs its input tokens at the input price plus its output tokens at the output price. A price list written per million tokens gives the price per token when divided by one million. A routing message is long on the input side, because the prompt and the message are both counted, and short on the output side, because the answer is one team name.
 
-A machine is paid for whether it is busy or not. Its monthly bill is its hours times its hourly rate. The number of messages it can route in a month is its throughput, in messages per second, times the seconds in a month, times its utilisation, which is the share of the month it is busy. The machine's cost per message therefore depends on how many messages it routes, and the comparison needs a volume before it gives an answer.
+A machine is paid for whether it is busy or not. A machine's monthly bill is its hours times its hourly rate. The number of messages a machine can route in a month is its throughput, in messages per second, times the seconds in a month, times its utilisation, which is the share of the month it is busy. The machine's cost per message therefore depends on how many messages it routes, and the comparison needs a volume before it gives an answer.
 
 The three formulas below hold for any pair of options.
 
@@ -115,7 +115,7 @@ The table is a list of what to count, not a score. Read its rows in order: the r
 
 ## Know the break-even {#know-the-break-even}
 
-The break-even is the volume at which the two monthly bills are equal. Below it, the hosted model costs less at the inputs you set. Above it, the machine costs less, provided the volume is inside the machine's capacity. The machine's bill is paid whether it is busy or idle, so the break-even divides that bill by the hosted price per message:
+The break-even is the volume at which the hosted model's monthly bill and the machine's are equal. Below it, the hosted model costs less at the inputs you set. Above it, the machine costs less, provided the volume is inside the machine's capacity. The machine's bill is paid whether it is busy or idle, so the break-even divides that bill by the hosted price per message:
 
 break-even messages per month = machine bill per month ÷ hosted price per message
 
