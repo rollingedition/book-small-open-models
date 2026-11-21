@@ -61,7 +61,7 @@ The [previous section](#load-each-model-at-its-pinned-revision) showed what the 
 
 The prompt opens with the sentence "Route this customer message from an online bank to one support team." It asks for the team name only, lists the teams, then gives the message and ends with the word "Team:". Everything in that text is the same from one message to the next except the message itself, so the cost of a message is the fixed text plus the message's own length.
 
-The tokenizer turns that text into tokens, the units a model reads. The count is in tokens rather than characters because a model reads tokens. Counting needs the tokenizer's rules but no weights, so the count is the first cost you can take before you choose a design. A classifier reads the message once and returns a score for each team. A generative model reads the prompt once and then writes its answer one token at a time, and each token it writes is one more pass through the network. The later chapters use both designs.
+The tokenizer turns the prompt's text into tokens, the units a model reads. The count is in tokens rather than characters because a model reads tokens. Counting needs the tokenizer's rules but no weights, so the count is the first cost you can take before you choose a design. A classifier reads the message once and returns a score for each team. A generative model reads the prompt once and then writes its answer one token at a time, and each token it writes is one more pass through the network. The later chapters use both designs.
 
 One example counts the forward passes, each one call of the network, for a single test message under each design. It uses the 135M model with no adapter. The classifier's head is untrained here, so only the pass count matters.
 

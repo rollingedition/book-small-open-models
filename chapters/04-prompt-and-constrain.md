@@ -16,7 +16,7 @@ Every example in this chapter uses one router prompt. It tells the model that th
 
 The list of teams in the prompt is the same list the constraint uses. The trie in the next section is built from the same label names in the same order, so the prompt and the constraint cannot disagree about which teams exist. The same dependency works the other way. A reader who adds or renames a team changes the prompt, and so changes the recording's hash. The counts in this chapter then no longer describe that prompt, and the reader must record again before comparing.
 
-The raw form passes that text to the model as it stands. The chat form wraps the same text in the model's chat template, which adds a default system prompt. To see what the template changes, run the chat form on the same six messages:
+The raw form passes the router prompt's text to the model as it stands. The chat form wraps the router prompt's text in the model's chat template, which adds a default system prompt. To see what the template changes, run the chat form on the same six messages:
 
 [Example: constrained-decode-135m-chat](../examples/constrained-decode-135m-chat.py)
 
@@ -44,7 +44,7 @@ Greedy decoding then takes the highest-scoring of the allowed tokens at each ste
 
 Chapter 1's stand-in got the same guarantee from its library. `recordings/common.py` builds a grammar, `root ::= "card_arrival" | ...`, that lists the 77 names as literal strings, and the recordings applied it through the chat template. llama-cpp-python adds a grammar to its sampler before the greedy step. In `llama_cpp/llama.py` the line `sampler.add_grammar(self._model, grammar)` runs under `if grammar is not None:`, and `sampler.add_greedy()` runs after it, under `elif temp == 0.0:` ([llama-cpp-python v0.3.36, `llama_cpp/llama.py`](https://raw.githubusercontent.com/abetlen/llama-cpp-python/v0.3.36/llama_cpp/llama.py)). So the stand-in's answers were limited to the names by the library, where this chapter's callback does the same job in the decoder.
 
-Two details of that code shape the callback. The processor calls it as `self._prefix_allowed_tokens_fn(batch_id, sent)`, so the batch index comes first. And an empty list is an error: the processor raises `ValueError` when the callback returns no tokens. The book's callback therefore never returns an empty list. When no path can continue, it returns the end-of-answer token, and the answer stops there. That token is the model's `<|im_end|>`, which is also its pad token (id 2). The decoder stops after 32 new tokens (`max_new_tokens=32`). Every one of the 600 recorded answers ended on a team. A node with no children always holds a team, so the empty-list case is a guard and not a case the 77 names produce.
+Two details of that code shape the callback. The processor calls it as `self._prefix_allowed_tokens_fn(batch_id, sent)`, so the batch index comes first. And an empty list is an error: the processor raises `ValueError` when the callback returns no tokens. The book's callback therefore never returns an empty list. When no path can continue, it returns the end-of-answer token, and the answer stops there. The end-of-answer token is the model's `<|im_end|>`, which is also its pad token (id 2). The decoder stops after 32 new tokens (`max_new_tokens=32`). Every one of the 600 recorded answers ended on a team. A node with no children always holds a team, so the empty-list case is a guard and not a case the 77 names produce.
 
 First, the 135M model with the trie, on those six messages.
 
@@ -110,7 +110,7 @@ The cost falls on the people who receive the message. A valid wrong team sends t
 
 ## Why a prior is not a router {#why-the-prior-wins}
 
-Constrained decoding returns one answer and no scores. Label scoring gives every team a score. For each team, it sums the log-probability of the team's tokens after the prompt, where a log-probability is the logarithm of the probability the model gives a token. The highest sum is the model's top team for the message.
+Constrained decoding returns one answer and no scores. Label scoring gives every team a score. For each team, label scoring sums the log-probability of the team's tokens after the prompt, where a log-probability is the logarithm of the probability the model gives a token. The team with the highest sum is the model's top team for the message.
 
 Run it on three messages and read the top team of each:
 
