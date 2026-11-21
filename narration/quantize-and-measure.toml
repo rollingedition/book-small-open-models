@@ -5,3 +5,14 @@ say = "The example builds the int8 copy of the adapter's model and counts the li
 
 [examples.int8-changed-predictions]
 say = "The example scores the two hundred messages of the test sample twice, once with the float32 adapter and once with its int8 copy, at the threshold in the adapter's manifest, {{out:int8-changed-predictions:handoff threshold from manifest}}. For each copy it prints the accuracy, the hand-offs and the accuracy on the messages kept. The float32 adapter gets {{out:int8-changed-predictions:float32 accuracy on test_200}} right, and the int8 copy gets {{out:int8-changed-predictions:int8 accuracy on test_200}}. The float32 adapter hands off {{out:int8-changed-predictions:float32 handed off}} messages, and the int8 copy hands off {{out:int8-changed-predictions:int8 handed off}}. The next lines count the messages whose team changes between the two copies, and the hand-off decisions that change: {{out:int8-changed-predictions:predictions changed by int8}}, and {{out:int8-changed-predictions:hand-off decisions changed by int8}}. The last line does the same for a copy that quantizes the score head too: {{out:int8-changed-predictions:predictions changed with the head in int8 too}}."
+
+[terms]
+"arXiv:2611.24043v1" = "archive identifier two six one one point two four oh four three, version one"
+"NLLB" = "N L L B"
+"Qwen2.5" = "Qwen two point five"
+"FP16" = "F P sixteen"
+"INT8" = "int eight"
+"NF4" = "N F four"
+"NVIDIA" = "en-vidia"
+"T4" = "T four"
+"chrF" = "chr F"
