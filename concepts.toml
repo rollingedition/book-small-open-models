@@ -68,7 +68,7 @@ section = "what-the-router-returns"
 example = "route-one-message"
 
 [concepts.relations]
-computed-from = ["answer-log-probability"]
+computed-from = ["total-log-probability"]
 contrasts-with = ["softmax"]
 
 [[concepts]]
@@ -89,6 +89,10 @@ context = "large-language-models"
 aliases = ["tokens"]
 definition = "A token is a piece of text the model reads and writes."
 section = "what-the-router-returns"
+agrees = [{ book = "agent-harnesses", definition = "a token is a unit of one vocabulary, and the same text can split into different numbers of units under another" }]
+
+[concepts.relations]
+same-as = ["https://rollingedition.com/concepts/natural-language-processing/token", "https://rollingedition.com/concepts/semantic-search/token"]
 
 [[concepts]]
 id = "dev-split"
@@ -100,6 +104,7 @@ example = "count-the-splits"
 
 [concepts.relations]
 contrasts-with = ["test-split"]
+same-as = ["https://rollingedition.com/concepts/artificial-intelligence/validation-split"]
 
 [[concepts]]
 id = "hand-off"
@@ -107,6 +112,9 @@ term = "hand-off"
 context = "message-routing"
 definition = "A hand-off gives the message to a person who can route it"
 section = "what-the-router-returns"
+
+[concepts.relations]
+close-to = ["https://rollingedition.com/concepts/ai-agents/handoff"]
 
 [[concepts]]
 id = "selective-classification"
@@ -133,14 +141,19 @@ term = "greedy decoding"
 context = "large-language-models"
 definition = "greedy decoding, which takes the most likely token at each step"
 section = "ask-a-model-for-one-team"
+agrees = [{ book = "language-models-from-the-ground-up", definition = "The simplest decoder is greedy: at every step, take the single likeliest token." }]
+
+[concepts.relations]
+same-as = ["https://rollingedition.com/concepts/data-engineering/greedy-decoding"]
 
 [[concepts]]
-id = "answer-log-probability"
+id = "total-log-probability"
 term = "answer log-probability"
 context = "large-language-models"
 definition = "the log-probability of the answer, which is the sum of the answer's token log-probabilities"
 section = "ask-a-model-for-one-team"
 example = "record-your-own-answers"
+agrees = [{ book = "language-models-from-the-ground-up", definition = "total log-probability, the sum of the logarithms of a text's token probabilities, where higher means likelier" }]
 
 [concepts.relations]
 computed-from = ["token"]
@@ -152,6 +165,9 @@ context = "message-routing"
 definition = "`handoff(confidence, threshold)` returns true when the confidence is below the threshold, and false when it is equal to the threshold or above it."
 section = "hand-off-the-unsure-messages"
 example = "route-one-message"
+
+[concepts.relations]
+computed-from = ["confidence", "threshold"]
 
 [[concepts]]
 id = "placeholder-threshold"
@@ -213,6 +229,9 @@ definition = "SmolLM2-135M-Instruct is the smallest model in the family that thi
 section = "show-what-a-small-model-does-first"
 example = "unconstrained-first-try"
 
+[concepts.relations]
+part-of = ["smollm2"]
+
 [[concepts]]
 id = "stand-in"
 term = "stand-in"
@@ -232,6 +251,7 @@ example = "count-the-splits"
 
 [concepts.relations]
 contrasts-with = ["dev-split"]
+close-to = ["https://rollingedition.com/concepts/artificial-intelligence/test-split"]
 
 [[concepts]]
 id = "test-200"
@@ -260,6 +280,9 @@ context = "message-routing"
 definition = "A recording fixes the answers to one model at one revision, so a reader who runs the same example later sees the same numbers."
 section = "the-baseline-from-recorded-answers"
 
+[concepts.relations]
+same-as = ["https://rollingedition.com/concepts/artificial-intelligence/recording", "https://rollingedition.com/concepts/llm-evaluation/recording"]
+
 [[concepts]]
 id = "recording-manifest"
 term = "recording manifest"
@@ -270,6 +293,7 @@ section = "the-baseline-from-recorded-answers"
 
 [concepts.relations]
 part-of = ["recording"]
+same-as = ["https://rollingedition.com/concepts/data-governance/recording-manifest"]
 
 [[concepts]]
 id = "baseline"
@@ -281,6 +305,7 @@ example = "baseline-measures"
 
 [concepts.relations]
 measured-from = ["test-1001"]
+close-to = ["https://rollingedition.com/concepts/artificial-intelligence/baseline"]
 
 [[concepts]]
 id = "error"
@@ -299,6 +324,7 @@ term = "base model"
 context = "large-language-models"
 definition = "A base model is a model already pretrained on a large amount of text, which you adapt to one job."
 section = "the-candidates-and-what-we-keep"
+agrees = [{ book = "language-models-from-the-ground-up", definition = "the base model, the one trained only to predict the next token" }]
 
 [[concepts]]
 id = "smollm2"
@@ -312,6 +338,9 @@ term = "pinned revision"
 definition = "A revision pinned by a full commit hash names one snapshot of the files"
 section = "load-each-model-at-its-pinned-revision"
 applies_to = ["huggingface_hub"]
+
+[concepts.relations]
+same-as = ["https://rollingedition.com/concepts/large-language-models/pinned-revision"]
 
 [[concepts]]
 id = "pins-file"
@@ -327,6 +356,9 @@ context = "large-language-models"
 definition = "A parameter is one of the numbers the model learns during training"
 section = "load-each-model-at-its-pinned-revision"
 example = "load-both-models-offline"
+
+[concepts.relations]
+same-as = ["https://rollingedition.com/concepts/deep-learning/parameter"]
 
 [[concepts]]
 id = "layer"
@@ -355,6 +387,9 @@ context = "large-language-models"
 definition = "The tokenizer turns the prompt's text into tokens, the units a model reads."
 section = "measure-what-one-message-costs"
 example = "count-prompt-tokens"
+
+[concepts.relations]
+close-to = ["https://rollingedition.com/concepts/natural-language-processing/tokenizer"]
 
 [[concepts]]
 id = "classifier"
@@ -425,6 +460,9 @@ context = "large-language-models"
 aliases = ["unconstrained decoding"]
 definition = "the model decoded freely: greedy, taking the highest-scoring token at each step, as in this chapter, but with no mask on the tokens it could pick"
 section = "why-free-text-fails"
+
+[concepts.relations]
+broader = ["greedy-decoding"]
 
 [[concepts]]
 id = "router-lib"
@@ -518,12 +556,19 @@ aliases = ["score head", "classifier head"]
 definition = "A classification head works differently from the stand-in: it keeps the language model's layers and adds one output layer with 77 outputs, one for each team."
 section = "a-head-that-scores-the-teams"
 
+[concepts.relations]
+contrasts-with = ["message-routing/stand-in"]
+
 [[concepts]]
 id = "softmax"
 term = "softmax"
 context = "large-language-models"
 definition = "Softmax turns the scores into 77 probabilities that sum to one."
 section = "a-head-that-scores-the-teams"
+wikidata = "Q7554146"
+
+[concepts.relations]
+same-as = ["https://rollingedition.com/concepts/deep-learning/softmax"]
 
 [[concepts]]
 id = "confidence"
@@ -545,6 +590,7 @@ section = "adapters-train-a-small-part-of-the-model"
 
 [concepts.relations]
 contrasts-with = ["lora"]
+same-as = ["https://rollingedition.com/concepts/large-language-models/full-fine-tuning"]
 
 [[concepts]]
 id = "lora"
@@ -553,10 +599,12 @@ context = "fine-tuning"
 aliases = ["low-rank adaptation"]
 definition = "The paper that introduced LoRA, Hu et al. (2021), says it freezes the pre-trained weights and injects trainable low-rank matrices into the layers of the Transformer, and the trained LoRA matrices are the adapter."
 section = "adapters-train-a-small-part-of-the-model"
+wikidata = "Q130145067"
 
 [concepts.relations]
 contrasts-with = ["full-fine-tuning"]
 implemented-by = [{ to = "peft", versions = ">=0.21" }]
+same-as = ["https://rollingedition.com/concepts/large-language-models/lora"]
 
 [[concepts]]
 id = "adapter"
@@ -627,6 +675,10 @@ context = "fine-tuning"
 aliases = ["knowledge distillation"]
 definition = "Distillation trains a small model to reproduce a large one."
 section = "what-distillation-copies"
+wikidata = "Q74253442"
+
+[concepts.relations]
+same-as = ["https://rollingedition.com/concepts/search-and-recommendation/distillation"]
 
 [[concepts]]
 id = "soft-targets"
@@ -830,6 +882,9 @@ context = "message-routing"
 definition = "The version the route reports is the suffix of the adapter's name."
 section = "what-goes-wrong-in-production"
 
+[concepts.relations]
+computed-from = ["fine-tuning/adapter"]
+
 [[concepts]]
 id = "spawned-worker"
 term = "spawned worker"
@@ -890,6 +945,9 @@ term = "kept message"
 context = "message-routing"
 definition = "The keeps are the messages whose answers the route returned"
 section = "sample-handed-off-messages-for-people"
+
+[concepts.relations]
+contrasts-with = ["hand-off"]
 
 [[concepts]]
 id = "kept-message-sample"
@@ -976,3 +1034,6 @@ example = "break-even-from-recorded-ratio"
 
 [concepts.relations]
 computed-from = ["machine-bill", "hosted-bill"]
+
+[retired]
+"large-language-models/answer-log-probability" = "large-language-models/total-log-probability"
