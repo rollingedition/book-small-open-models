@@ -90,11 +90,13 @@ The adapter trained on {{out:student-vs-gold-control:banking77-lora-v1 training 
 
 A student trained on one label per message learns the labels it is given. Where the teacher is wrong on a row, the student has been shown the wrong team for that row, and it has no way to know otherwise. The teacher's agreement with gold on the training rows, [measured above](#label-training-rows-with-the-teacher), is the share of the teacher's training labels that are right. The student is measured on test messages and not on its training rows, because its figures on rows it trained on would show what it memorised rather than what it learned.
 
-![The teacher's agreement with gold differs from team to team, so its errors are not spread evenly, with the overall share as a dashed line](../examples/figures/teacher-agreement-by-team.svg "Each team's share of its training rows where the teacher agrees with gold")
+{{fig:teacher-agreement-by-team}} draws one bar per team, as tall as its training rows, sorted from the highest share of rows the teacher gets right to the lowest, with the right rows at the bottom and the wrong ones hatched above them.
+
+![On some teams the teacher gets every training row wrong, so its errors are not spread evenly across the teams](../examples/figures/teacher-agreement-by-team.svg "Each team's training rows, split into those where the teacher agrees with gold and those where it doesn't")
 
 [Example: figure-teacher-agreement-by-team](../examples/figure-teacher-agreement-by-team.py)
 
-The teacher's errors are not spread evenly: {{out:figure-teacher-agreement-by-team:teams with agreement below one half}} of the {{out:figure-teacher-agreement-by-team:teams with labelled rows}} teams have agreement below one half, so for those teams the student is shown the wrong team on most of their training rows. {{fig:teacher-agreement-by-team}} draws one bar per team, sorted from the highest share to the lowest, with the overall share as a dashed line. Each team has few training rows, from {{out:figure-teacher-agreement-by-team:labelled rows per team, fewest}} to {{out:figure-teacher-agreement-by-team:labelled rows per team, most}}, so read each share as a count of its rows and not as a precise rate.
+The teacher's errors are not spread evenly: on {{out:figure-teacher-agreement-by-team:teams where the teacher gets no row right}} teams it gets no row right, and {{out:figure-teacher-agreement-by-team:teams with agreement below one half}} teams have agreement below one half. For those teams the student is shown the wrong team on most of their training rows. Each team has few rows, but every team below one half has at least {{out:figure-teacher-agreement-by-team:rows in the smallest team below one half}}, so those are not one-row accidents.
 
 On this task, the student that learns from the stand-in's labels is not the one to ship, as the [figures above](#measure-agreement-not-only-accuracy) show. [Chapter 7](quantize-and-measure) quantizes `banking77-lora-v1`, the human-labelled adapter, and not the student.
 

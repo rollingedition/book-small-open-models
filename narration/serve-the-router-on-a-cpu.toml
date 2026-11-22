@@ -6,6 +6,9 @@ say = "The example loads the recorded adapter, banking seventy-seven, LoRA, vers
 [examples.truncation-count]
 say = "The example loads only the tokenizer, and counts the test two hundred messages longer than sixty-four tokens, {{out:truncation-count:messages over 64 tokens}}, and longer than one hundred twenty-eight tokens, which is where the route cuts, {{out:truncation-count:messages over 128 tokens where classify() cuts}}. The example then repeats one message until it is longer than one hundred twenty-eight tokens, and tokenizes it the way the route does. The message comes to {{out:truncation-count:repeated message tokens before the cut}} tokens before the cut and {{out:truncation-count:repeated message tokens after the cut}} after it. No model runs, and no message text is printed."
 
+[examples.figure-message-token-lengths]
+say = "The example loads only the tokenizer and measures the test two hundred messages in tokens. It prints the median, {{out:figure-message-token-lengths:median length in tokens}} tokens, and the longest, {{out:figure-message-token-lengths:longest message in tokens}} tokens. It draws the lengths as a histogram, with the sixty-four and one hundred twenty-eight token cuts marked as lines."
+
 [[blocks]]
 section = "what-goes-wrong-in-production"
 starts = "# serve_route.py"

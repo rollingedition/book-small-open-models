@@ -1,8 +1,5 @@
-overall agreement, all labelled rows: 549/1000 (54.9%)
 teams with labelled rows: 77
-labelled rows per team, fewest: 1
-labelled rows per team, most: 26
-highest team agreement: 100.0%
-lowest team agreement: 0.0%
+teams where the teacher gets no row right: 7
 teams with agreement below one half: 35
+rows in the smallest team below one half: 6
 figure: figures/teacher-agreement-by-team.svg

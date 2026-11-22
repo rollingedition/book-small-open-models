@@ -1,7 +1,0 @@
-machine: a cloud machine with 4 vCPUs and 15 GiB of memory, 4 threads
-stand-in, one message per call, messages a second: 0.32
-float32 classifier, one message per call, messages a second: 19.0
-float32 classifier, batches of 16, messages a second: 33.0
-int8 classifier, batches of 16, messages a second: 29.0
-int8 over fp32, batches of 16, from these rates: 0.9
-figure: figures/recorded-throughput.svg
