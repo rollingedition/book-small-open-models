@@ -16,7 +16,7 @@ say = "The example scores all 77 teams for three of the test messages with the 1
 say = "The example reads the saved answers of three variants on all two hundred test messages, and it loads no model. For each variant it prints how many answers are not team names, how many are right, how many distinct teams were given, the team given most often with its count, and how many messages that team is the right answer for. The table in the chapter sets the three variants side by side."
 
 [examples.figure-answers-pile-on-one-team]
-say = "The example reads the saved answers of the three variants on the two hundred test messages, and it loads no model. For each variant it ranks the teams by how many answers they got and draws the shares of the ten most given. It prints the most given team of the 135M model with the raw prompt, {{out:figure-answers-pile-on-one-team:135m-raw most given team}}, and the even share over the gold teams of the sample, {{out:figure-answers-pile-on-one-team:even share over the gold teams}}, which the dotted line draws."
+say = "The example reads the saved answers of the three variants on the two hundred test messages, and it loads no model. For each variant it ranks the teams by how many answers they got and draws the shares of the ten most given. It prints how many of the 135M raw prompt's answers go to its most given team, {{out:figure-answers-pile-on-one-team:135m-raw most given team}}, and the even share over the {{out:figure-answers-pile-on-one-team:gold teams in test_200}} gold teams of the sample, {{out:figure-answers-pile-on-one-team:even share over the gold teams}}, which the dotted line draws."
 
 [[tables]]
 section = "measure-the-constrained-answers"

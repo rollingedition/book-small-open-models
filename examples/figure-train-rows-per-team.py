@@ -1,6 +1,6 @@
 """Rank the training file's rows per team and draw them against the test file's count per team; no model runs.
 
-The prose's point rests on the training file's fewest and most rows for a team, which equal count-the-splits' lines, and on the test file's count, which is the same for every team.
+The prose's point rests on the median training count, and on how many teams have more training rows than the test file's count, which is the same for every team.
 """
 
 import os
@@ -35,6 +35,7 @@ print(f"train per label min: {min(train_counts)}")
 print(f"train per label max: {max(train_counts)}")
 print(f"train per label median: {median(train_counts)}")
 print(f"test per label: {test_counts[0]}")
+print(f"teams with more training rows than the test count: {sum(c > test_counts[0] for c in train_counts)}")
 print("test file even across teams: yes")
 
 fig, ax = new_figure()

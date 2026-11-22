@@ -1,5 +1,5 @@
 """Draw how each prompting variant's answers pile onto its most given teams, against the even share over the gold teams of test_200.
-The lines the prose reads are each variant's most given team and its distinct teams, the counts prompting-on-test-200 prints. No model runs here, and the answers come from the recording."""
+The prose reads the gold-team count and the even share. The counts are recomputed from the recording with the tie-break prompting-on-test-200 uses, and no model runs here."""
 
 import os
 
@@ -36,6 +36,8 @@ with open(ANSWERS) as f:
 fig, ax = new_figure()
 for variant, (color, marker, name) in STYLES.items():
     given = collections.Counter(r["team"] for r in records if r["variant"] == variant)
+    # every variant answers all the sample's messages, so each share below uses the same total
+    assert sum(given.values()) == total
     # a tie in count goes to the team name that sorts first, as in prompting-on-test-200
     ordered = sorted(given.items(), key=lambda item: (-item[1], item[0]))
     # a variant with fewer than ten teams gives no answers at the ranks past its last team

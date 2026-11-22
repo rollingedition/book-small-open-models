@@ -335,7 +335,7 @@ L 437.645384 145.243753
 L 441.712988 141.56823 
 L 445.780593 135.967434 
 L 449.848197 91.861163 
-" clip-path="url(#pe2808a7820)" style="fill: none; stroke: #1b1712; stroke-width: 1.4; stroke-linecap: square"/>
+" clip-path="url(#pe2808a7820)" style="fill: none; stroke-dasharray: 5.18,2.24; stroke-dashoffset: 0; stroke: #1b1712; stroke-width: 1.4"/>
    </g>
    <g id="line2d_26">
     <path d="M 43.08774 83.985043 
@@ -458,31 +458,31 @@ L 449.848197 181.998979
    </g>
    <g id="legend_1">
     <g id="line2d_28">
-     <path d="M 52.08774 19.897506 
-L 62.08774 19.897506 
-L 72.08774 19.897506 
-" style="fill: none; stroke: #1b1712; stroke-width: 1.4; stroke-linecap: square"/>
+     <path d="M 222.19351 19.897506 
+L 232.19351 19.897506 
+L 242.19351 19.897506 
+" style="fill: none; stroke-dasharray: 5.18,2.24; stroke-dashoffset: 0; stroke: #1b1712; stroke-width: 1.4"/>
     </g>
     <g id="text_15">
-     <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="80.08774" y="23.397506" transform="rotate(-0 80.08774 23.397506)">handed off, share of all messages</text>
+     <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="250.19351" y="23.397506" transform="rotate(-0 250.19351 23.397506)">handed off, share of all messages</text>
     </g>
     <g id="line2d_29">
-     <path d="M 52.08774 34.898287 
-L 62.08774 34.898287 
-L 72.08774 34.898287 
+     <path d="M 222.19351 34.898287 
+L 232.19351 34.898287 
+L 242.19351 34.898287 
 " style="fill: none; stroke: #9a4a06; stroke-width: 1.4; stroke-linecap: square"/>
     </g>
     <g id="text_16">
-     <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="80.08774" y="38.398287" transform="rotate(-0 80.08774 38.398287)">accuracy on messages not handed off</text>
+     <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="250.19351" y="38.398287" transform="rotate(-0 250.19351 38.398287)">accuracy on messages not handed off</text>
     </g>
     <g id="line2d_30">
-     <path d="M 52.08774 49.899068 
-L 62.08774 49.899068 
-L 72.08774 49.899068 
+     <path d="M 222.19351 49.899068 
+L 232.19351 49.899068 
+L 242.19351 49.899068 
 " style="fill: none; stroke-dasharray: 1.4,2.31; stroke-dashoffset: 0; stroke: #61574a; stroke-width: 1.4"/>
     </g>
     <g id="text_17">
-     <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="80.08774" y="53.399068" transform="rotate(-0 80.08774 53.399068)">placeholder threshold 0.5</text>
+     <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="250.19351" y="53.399068" transform="rotate(-0 250.19351 53.399068)">placeholder threshold 0.5</text>
     </g>
    </g>
   </g>

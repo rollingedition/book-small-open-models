@@ -90,9 +90,9 @@ No row is close to a router, though the constraint holds in every one: no answer
 
 Distinct teams alone mislead. The 135M raw row gives {{out:prompting-on-test-200:135m-raw distinct teams given}} distinct teams, against {{out:prompting-on-test-200:360m-raw distinct teams given}} for the 360M raw row, but most of the 135M row's answers go to one team, {{out:prompting-on-test-200:135m-raw most given team}}, while the 360M raw row's most given team gets only {{out:prompting-on-test-200:360m-raw most given team}}.
 
-{{fig:answers-pile-on-one-team}} shows the 135M raw line at {{out:figure-answers-pile-on-one-team:135m-raw most given team}} on one team.
+{{fig:answers-pile-on-one-team}} ranks each variant's teams by answers given. Every variant's top team dwarfs the even share over the {{out:figure-answers-pile-on-one-team:gold teams in test_200}} gold teams, {{out:figure-answers-pile-on-one-team:even share over the gold teams}}.
 
-![Each variant's answers pile onto its top few teams, far above an even spread over the gold teams, and the 135M raw prompt piles most](../examples/figures/answers-pile-on-one-team.svg "Share of each variant's 200 answers given to its ten most given teams, ranked from the most given")
+![Every variant's most given team takes far more than an even share of the answers](../examples/figures/answers-pile-on-one-team.svg "Share of each variant's 200 answers given to its ten most given teams, ranked from the most given")
 
 [Example: figure-answers-pile-on-one-team](../examples/figure-answers-pile-on-one-team.py)
 
