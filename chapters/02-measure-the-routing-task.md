@@ -40,6 +40,12 @@ The first thing to see is how big each split is and how unevenly the teams are s
 
 The test file is even, with the same count for every team, and the training file is not: its teams run from {{out:count-the-splits:train per label min}} messages to {{out:count-the-splits:train per label max}}. That spread is why the dev draw is made team by team rather than as one random tenth of the file. The test file's own fewest and most, {{out:count-the-splits:test per label min}} and {{out:count-the-splits:test per label max}}, are equal.
 
+{{fig:train-rows-per-team}} ranks the teams from the most training rows to the fewest, with the test file's count per team as the dashed line. The bars step down from left to right. {{out:figure-train-rows-per-team:teams with more training rows than the test count}} of the {{out:figure-train-rows-per-team:labels}} teams have more training rows than the test file gives each team; the other is the smallest team. The median team has {{out:figure-train-rows-per-team:train per label median}} training messages.
+
+![Training rows per team, ranked, stand above the test file's flat dashed count for every team but the smallest.](../examples/figures/train-rows-per-team.svg "Training rows per team, ranked, against the test file's count per team")
+
+[Example: figure-train-rows-per-team](../examples/figure-train-rows-per-team.py)
+
 The stratified sample is even as well, at {{out:count-the-splits:test_1001 per label min}} to {{out:count-the-splits:test_1001 per label max}} messages a team.
 
 The even test file is a property of the source, and the book relies on it. Equal counts per team mean that the test split does not reward a router for being good at the largest team. A router that does well on a sample with uneven counts can look better than it is, because most of its score comes from the teams with the most messages.
@@ -82,7 +88,7 @@ A measure means little until something has been scored against it. The baseline 
 
 The stand-in answered each of the messages in `test_1001` once. The answers are stored in a recording, `examples/data/recorded/standin-baseline/answers.jsonl`, and each answer names a team and gives its log-probability. The recording has a manifest beside it. The manifest names the script that made the recording, the model and its pinned revision, the hash of the prompt, the decoding settings and the seed, and the hash of the answers file. The code checks the answers file against that hash before it reads a line, so a changed file fails the run rather than changing a score.
 
-The recording is read, not run. Every example that uses the baseline reads the same answers, so the baseline cannot change from one run to the next, even if the runtime that made the recording is later updated. The reason for recording, rather than calling a model in each example, is the same reason the pins exist. A recording fixes the answers to one model at one revision, so a reader who runs the same example later sees the same numbers. The book never calls a hosted API, because a hosted model's answers are not fixed in the same way. The stand-in is an open model that anyone can run, and its recording is the only route to its answers that the book takes.
+The recording is read, not run. Every example that uses the baseline reads the same answers, so the baseline cannot change from one run to the next, even if the runtime that made the recording is later updated. The reason for recording, rather than calling a model in each example, is the same reason the pins exist. A recording fixes the answers to one model at one revision, one prompt and one sample, so a reader who runs the same example later sees the same numbers. The book never calls a hosted API, because a hosted model's answers are not fixed in the same way. The stand-in is an open model that anyone can run, and its recording is the only route to its answers that the book takes.
 
 The baseline is also not a ceiling. It is the score a candidate has to beat on the same messages, and it says nothing about the hand-off trade-off by itself. A candidate that beats it on accuracy may still hand off more messages than the support staff can read, so the baseline is always read beside the three measures and never as a single number.
 
@@ -93,6 +99,16 @@ What does the placeholder threshold cost? Scored with the three measures on `tes
 At the placeholder threshold, the stand-in gets {{out:baseline-measures:accuracy}} right and hands off {{out:baseline-measures:handed off}}. On the messages it keeps, its accuracy is {{out:baseline-measures:accuracy on messages not handed off}}.
 
 At a threshold above every confidence, the hand-off rate is {{out:baseline-measures:handed off at that threshold}}, so the accuracy on messages not handed off is {{out:baseline-measures:accuracy on messages not handed off at that threshold}}.
+
+{{fig:baseline-handoff-tradeoff}} sweeps the threshold from 0 to 1 in steps of 0.01 and draws two curves against it, named in its legend: the share of messages handed off, dashed, and the accuracy on the messages not handed off, solid. The trade-off is what to see: at each printed threshold, a higher threshold hands off more messages, and the messages kept are more often right.
+
+Raised from the placeholder 0.5 to 0.9, the threshold hands off {{out:figure-baseline-handoff-tradeoff:handed off at 0.9}}, and the stand-in is right on {{out:figure-baseline-handoff-tradeoff:accuracy on messages not handed off at 0.9}} of the messages it keeps.
+
+![A higher hand-off threshold hands off more messages, and at the printed thresholds the messages kept are more often right; the share handed off climbs steeply at the right edge.](../examples/figures/baseline-handoff-tradeoff.svg "The hand-off threshold swept from 0 to 1, with the share handed off and the accuracy on the messages not handed off")
+
+[Example: figure-baseline-handoff-tradeoff](../examples/figure-baseline-handoff-tradeoff.py)
+
+The curve turns steep at the right edge because of the last step, from 0.99 to 1.0. Those {{out:figure-baseline-handoff-tradeoff:messages with confidence at least 0.99 and below 1.0}} messages are handed off at 1.0, since a message is handed off only when its confidence is strictly below the threshold. The {{out:figure-baseline-handoff-tradeoff:messages with confidence exactly 1.0}} messages whose confidence is exactly 1.0 are kept even at 1.0, so at 1.0 the stand-in hands off {{out:figure-baseline-handoff-tradeoff:handed off at 1.0}}, and only a threshold above 1.0 hands them off too.
 
 A reader's own hosted model is a different baseline. It will score differently on the same messages, and the book does not claim that the stand-in's numbers are the inbox's numbers. The reader's baseline is their model's recorded answers on `test_1001`, scored with the three measures in this chapter. The comparison that matters is between the reader's candidate and that baseline, on the same messages, with the same counts.
 
@@ -108,7 +124,7 @@ Counting the wrong answers needs the recording itself, so the next example reads
 
 [Example: confusions-in-the-baseline](../examples/confusions-in-the-baseline.py)
 
-The stand-in is wrong on {{out:confusions-in-the-baseline:wrong rate}}. With no threshold applied, the error is one minus accuracy, so that wrong rate and the accuracy in [the baseline section](#the-baseline-from-recorded-answers) add up to 100%.
+The stand-in is wrong on {{out:confusions-in-the-baseline:wrong rate}}. Whatever the threshold, the error is one minus accuracy, so that wrong rate and the accuracy in [the baseline section](#the-baseline-from-recorded-answers) add up to 100%.
 
 Each of the three most frequent pairs takes all or nearly all of its gold team's sample messages. The first pair takes {{out:confusions-in-the-baseline:pair 1 of gold team}}, the second {{out:confusions-in-the-baseline:pair 2 of gold team}}, and the third {{out:confusions-in-the-baseline:pair 3 of gold team}}, so the first two take every message of their gold team and the third all but one. The team names suggest a reason for each pair: the first concerns a refund, the second a transfer, and the third a card's arrival and its delivery estimate. That is a reading of the names. The chapter does not read the messages, and no example prints them, so the pairs are a reason to look, not a finding about what the messages say.
 

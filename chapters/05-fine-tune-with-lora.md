@@ -12,7 +12,7 @@ This chapter does not compare the adapter with the 360M, and it does not distill
 
 ## A head that scores the teams {#a-head-that-scores-the-teams}
 
-The stand-in writes its answer as text, and a grammar limits that text to the 77 team names while it decodes ([chapter 4](prompt-and-constrain#a-token-trie-allows-only-team-names)). A classification head works differently from the stand-in: it keeps the language model's layers and adds one output layer with 77 outputs, one for each team. For each message, the model produces 77 scores. Softmax turns the scores into 77 probabilities that sum to one. The router returns the team with the highest probability, and the confidence is that probability.
+The stand-in writes its answer as text, and a grammar limits that text to the 77 team names while it decodes ([chapter 4](prompt-and-constrain#a-token-trie-allows-only-team-names)). A classification head works differently from the stand-in: it keeps the language model's layers but its output layer, and in its place adds one output layer with 77 outputs, one for each team. For each message, the model produces 77 scores. Softmax turns the scores into 77 probabilities that sum to one. The router returns the team with the highest probability, and the confidence is that probability.
 
 The answer is an index into the 77 teams, so it is always one of them. [Chapter 4](prompt-and-constrain) reaches the same guarantee for a prompted model by constraining its text. This head never writes text, so it has nothing to constrain.
 
@@ -26,7 +26,7 @@ When two teams tie, `router_lib`'s `classify` function takes the lower label ind
 
 ## Adapters train a small part of the model {#adapters-train-a-small-part-of-the-model}
 
-Full fine-tuning changes every weight in the base model. LoRA takes a different route. The paper that introduced LoRA, [Hu et al. (2021)](https://arxiv.org/abs/2106.09685), says it freezes the pre-trained weights and injects trainable low-rank matrices into the layers of the Transformer, and the trained LoRA matrices are the adapter. The base model stays as it was, and the adapter is the part this book stores, loads and versions.
+Full fine-tuning changes every weight in the base model. LoRA takes a different route. The paper that introduced LoRA, [Hu et al. (2021)](https://arxiv.org/abs/2106.09685), says it freezes the pre-trained weights and injects trainable low-rank matrices into the layers of the Transformer. In this book, the trained LoRA matrices are the adapter. The base model stays as it was, and the adapter is the part this book stores, loads and versions.
 
 The rank, `r`, is the inner size of each added matrix, and it is kept small. Peft scales the added update by `lora_alpha` divided by `r` ([peft {{version:peft}}, `src/peft/tuners/lora/layer.py`](https://raw.githubusercontent.com/huggingface/peft/v0.21.2/src/peft/tuners/lora/layer.py), line 281: `self.scaling[adapter_name] = lora_alpha / r`), so `lora_alpha` sets how strongly the update counts. This book uses a rank of 8, with `lora_alpha` set to 16. The added matrices go in the projection layers named `q_proj` and `v_proj` in each attention block. The abstract does not name those layers, so this choice is the book's, not something the paper prescribes. We recommend it as a starting point, and the recorded adapter below is the test of that recommendation on this task. Other targets are a choice to measure, not a fact about the method.
 
@@ -65,6 +65,16 @@ The rule matters most when a result looks good. A training run that reads the te
 ## Use the recorded adapter {#use-the-recorded-adapter}
 
 The working router uses `banking77-lora-v1`: the adapter from the full recorded run, version 1, written by `recordings/lora_full.py`. That script trained the adapter once, on the recipe in [the section on training rows](#train-on-the-training-rows-never-on-the-test-rows), and wrote its files and a manifest. The manifest holds the base model's revision, the data commit, the threshold, the recipe's hash and the hashes of the output files. Offline, the adapter loads and scores `test_200` at the threshold from its manifest, and nothing is trained.
+
+The recording ends far below the uniform guess over 77 teams that [thirty steps are not enough](#thirty-steps-are-not-enough) compares the short run against: over its last hundred steps the mean loss is {{out:figure-lora-loss-curve:mean loss of the last 100 steps}}, against {{out:figure-lora-loss-curve:loss of a uniform guess over 77 teams}}. {{fig:lora-loss-curve}} draws the loss at every step of the recording, with its moving mean and the uniform guess. The thin line is the loss at each step, and the heavy line is the moving mean.
+
+The shaded span on the left covers the short run's steps, and their mean loss is {{out:figure-lora-loss-curve:mean loss of the short run steps}}, above the guess. The moving mean last sits at or above the guess at step {{out:figure-lora-loss-curve:moving mean last at or above the guess, ending at step}}, and from step {{out:figure-lora-loss-curve:moving mean below the guess from step on}} to the last step it stays below the guess.
+
+![The recording's loss falls from above the uniform guess to well below it, and the short run covers only its first steps.](../examples/figures/lora-loss-curve.svg "The loss at each step of the recorded run, its moving mean, and the uniform guess")
+
+[Example: figure-lora-loss-curve](../examples/figure-lora-loss-curve.py)
+
+The recording used seed {{out:figure-lora-loss-curve:recording seed}} and batch size {{out:figure-lora-loss-curve:recording batch size}}, the same as the short run's {{out:lora-thirty-steps:seed}} and {{out:lora-thirty-steps:batch size}}.
 
 Take the adapter as it was recorded. A different recipe becomes a new run, named `v2`; the book does not edit the adapter by hand. Keeping the recording fixed is what lets a reader check the numbers in this chapter against the files they downloaded.
 
