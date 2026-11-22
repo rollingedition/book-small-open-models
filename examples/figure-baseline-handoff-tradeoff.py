@@ -11,8 +11,7 @@ import torch  # noqa: E402
 
 torch.set_num_threads(2)
 
-import json, math  # noqa: E402
-import router_lib  # noqa: E402
+import json, math, router_lib  # noqa: E402
 
 router_lib.setup_runtime()
 
