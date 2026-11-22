@@ -90,6 +90,12 @@ No row is close to a router, though the constraint holds in every one: no answer
 
 Distinct teams alone mislead. The 135M raw row gives {{out:prompting-on-test-200:135m-raw distinct teams given}} distinct teams, against {{out:prompting-on-test-200:360m-raw distinct teams given}} for the 360M raw row, but most of the 135M row's answers go to one team, {{out:prompting-on-test-200:135m-raw most given team}}, while the 360M raw row's most given team gets only {{out:prompting-on-test-200:360m-raw most given team}}.
 
+{{fig:answers-pile-on-one-team}} shows the 135M raw line at {{out:figure-answers-pile-on-one-team:135m-raw most given team}} on one team.
+
+![Each variant's answers pile onto its top few teams, far above an even spread over the gold teams, and the 135M raw prompt piles most](../examples/figures/answers-pile-on-one-team.svg "Share of each variant's 200 answers given to its ten most given teams, ranked from the most given")
+
+[Example: figure-answers-pile-on-one-team](../examples/figure-answers-pile-on-one-team.py)
+
 To read a row, start with the first column. If it is not zero, the constraint has not held, and the other two columns mean nothing until that is fixed. The second column is the one that matters for routing: it counts the messages whose team is the gold label, out of the whole sample, with the wrong answers counted as wrong. The third column says how many teams the variant uses at all. A variant that gives only a few teams is either guessing a few popular teams or has learned something narrow, and the count does not say which. A large count does not rule out concentration either, as the 135M raw row shows. A reader who runs the same three counts on a sample of their own messages gets a comparison on their own data, with the same meaning in each column.
 
 The 360M model is the larger of the two, and [chapter 3](choose-a-base-model) counted how much larger it is. The table shows what that cost buys on this prompt and this constraint: {{out:prompting-on-test-200:360m-raw correct}} right, against {{out:prompting-on-test-200:135m-raw correct}} for the 135M model on the same raw form. That is a few more messages for a larger model, and the chapter does not count it as a reason to pay for the extra size.

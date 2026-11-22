@@ -1,0 +1,7 @@
+steps in the recording: 1125
+window of the moving mean: 25 steps
+mean loss of steps 1-30: 5.84
+mean loss of the last 100 steps: 0.51
+loss of a uniform guess over 77 teams: 4.34
+recording's losses at steps 10, 20, 30 equal the short run's: yes
+figure: figures/lora-loss-curve.svg

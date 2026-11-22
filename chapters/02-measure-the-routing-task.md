@@ -40,6 +40,12 @@ The first thing to see is how big each split is and how unevenly the teams are s
 
 The test file is even, with the same count for every team, and the training file is not: its teams run from {{out:count-the-splits:train per label min}} messages to {{out:count-the-splits:train per label max}}. That spread is why the dev draw is made team by team rather than as one random tenth of the file. The test file's own fewest and most, {{out:count-the-splits:test per label min}} and {{out:count-the-splits:test per label max}}, are equal.
 
+{{fig:train-rows-per-team}} ranks the training counts from the most to the fewest. The bars start at {{out:figure-train-rows-per-team:train per label max}} for the largest team, fall to a median of {{out:figure-train-rows-per-team:train per label median}}, and end at {{out:figure-train-rows-per-team:train per label min}} for the smallest. The dashed line is the test file's count, {{out:figure-train-rows-per-team:test per label}} for every team, drawn flat across the chart.
+
+![Training rows per team, ranked from most to fewest, fall from a tall start into a short tail, against one flat dashed line for the test file's count per team.](../examples/figures/train-rows-per-team.svg "Training rows per team, ranked, against the test file's count per team")
+
+[Example: figure-train-rows-per-team](../examples/figure-train-rows-per-team.py)
+
 The stratified sample is even as well, at {{out:count-the-splits:test_1001 per label min}} to {{out:count-the-splits:test_1001 per label max}} messages a team.
 
 The even test file is a property of the source, and the book relies on it. Equal counts per team mean that the test split does not reward a router for being good at the largest team. A router that does well on a sample with uneven counts can look better than it is, because most of its score comes from the teams with the most messages.
@@ -93,6 +99,12 @@ What does the placeholder threshold cost? Scored with the three measures on `tes
 At the placeholder threshold, the stand-in gets {{out:baseline-measures:accuracy}} right and hands off {{out:baseline-measures:handed off}}. On the messages it keeps, its accuracy is {{out:baseline-measures:accuracy on messages not handed off}}.
 
 At a threshold above every confidence, the hand-off rate is {{out:baseline-measures:handed off at that threshold}}, so the accuracy on messages not handed off is {{out:baseline-measures:accuracy on messages not handed off at that threshold}}.
+
+{{fig:baseline-handoff-tradeoff}} sweeps the threshold from 0 to 1 in steps of 0.01 and draws two curves against it, named in its legend: the share of messages handed off, and the accuracy on the messages not handed off. At 1.0, the top of the sweep, {{out:figure-baseline-handoff-tradeoff:handed off at 1.0}} are handed off, and the accuracy on the rest is {{out:figure-baseline-handoff-tradeoff:accuracy on messages not handed off at 1.0}}. Those rest are the {{out:figure-baseline-handoff-tradeoff:messages with confidence 1.0}} messages whose confidence is exactly 1.0.
+
+![Raising the hand-off threshold hands off more messages and raises the accuracy on the messages kept, with the placeholder threshold marked.](../examples/figures/baseline-handoff-tradeoff.svg "The hand-off threshold swept from 0 to 1, with the share handed off and the accuracy on the messages not handed off")
+
+[Example: figure-baseline-handoff-tradeoff](../examples/figure-baseline-handoff-tradeoff.py)
 
 A reader's own hosted model is a different baseline. It will score differently on the same messages, and the book does not claim that the stand-in's numbers are the inbox's numbers. The reader's baseline is their model's recorded answers on `test_1001`, scored with the three measures in this chapter. The comparison that matters is between the reader's candidate and that baseline, on the same messages, with the same counts.
 
