@@ -10,13 +10,13 @@ Every message in the bank's support inbox costs something to route: a model read
 
 ## Which candidates we keep {#the-candidates-and-what-we-keep}
 
-A base model is a model already pretrained on a large amount of text, which you adapt to one job. Every later chapter builds on this choice, through the prompt, the training, the distillation and the serving, so it is worth making on evidence. There are many open models, so the book narrows the field with two questions: can the model run on the hardware the bank has, and can the bank use its licence?
+A base model is the model an [adapter](fine-tune-with-lora#adapters-train-a-small-part-of-the-model) is trained on: a model already pretrained on a large amount of text, which you adapt to one job. Every later chapter builds on this choice, through the prompt, the training, the distillation and the serving, so it is worth making on evidence. There are many open models, so the book narrows the field with two questions: can the model run on the hardware the bank has, and can the bank use its licence?
 
 The licence comes first in practice. It decides what the bank may do with the model in its own system, and a model the bank may not run is not a candidate, whatever its size. The book records each model's licence beside its pin, so a reader can see the same record the book used.
 
 The first candidate is SmolLM2, a family of models published on Hugging Face. The [model card](https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/tree/12fd25f77366fa6b3b4b768ec3050bf629380bac) for the 135M model, at the commit this book pins, gives the family's three sizes in one sentence: 135M, 360M and 1.7B parameters. The same card lists the licence as `license: apache-2.0`, which the book's pins record for both models it keeps. The card also gives the 135M model's training data as 2 trillion tokens. Those figures come from the card for the 135M model only.
 
-The book keeps two of the three sizes. The list below names them, and the table after it sets all three side by side, with the licence each pin records.
+The book keeps two of the three sizes, both in their instruction-tuned releases, the `-Instruct` models. The list below names them, and the table after it sets all three side by side, with the licence each pin records.
 
 - SmolLM2-135M-Instruct is the core model. The rest of the book trains and serves it.
 - SmolLM2-360M-Instruct is a comparison. The book loads it, counts its parameters and layers, and uses it beside the core model in this chapter and in [chapter 4](prompt-and-constrain). The book does not train it.

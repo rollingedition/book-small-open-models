@@ -321,10 +321,9 @@ computed-from = ["accuracy"]
 [[concepts]]
 id = "base-model"
 term = "base model"
-context = "large-language-models"
-definition = "A base model is a model already pretrained on a large amount of text, which you adapt to one job."
+context = "fine-tuning"
+definition = "A base model is the model an adapter is trained on: a model already pretrained on a large amount of text, which you adapt to one job."
 section = "the-candidates-and-what-we-keep"
-agrees = [{ book = "language-models-from-the-ground-up", definition = "the base model, the one trained only to predict the next token" }]
 
 [[concepts]]
 id = "smollm2"
@@ -1037,3 +1036,4 @@ computed-from = ["machine-bill", "hosted-bill"]
 
 [retired]
 "large-language-models/answer-log-probability" = "large-language-models/total-log-probability"
+"large-language-models/base-model" = "fine-tuning/base-model"
