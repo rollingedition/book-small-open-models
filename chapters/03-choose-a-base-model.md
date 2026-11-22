@@ -10,7 +10,7 @@ Every message in the bank's support inbox costs something to route: a model read
 
 ## Which candidates we keep {#the-candidates-and-what-we-keep}
 
-A base model is a model already pretrained on a large amount of text, and here also instruction-tuned, which you adapt to one job. Every later chapter builds on this choice, through the prompt, the training, the distillation and the serving, so it is worth making on evidence. There are many open models, so the book narrows the field with two questions: can the model run on the hardware the bank has, and can the bank use its licence?
+A base model is a model already pretrained on a large amount of text, which you adapt to one job. Every later chapter builds on this choice, through the prompt, the training, the distillation and the serving, so it is worth making on evidence. There are many open models, so the book narrows the field with two questions: can the model run on the hardware the bank has, and can the bank use its licence?
 
 The licence comes first in practice. It decides what the bank may do with the model in its own system, and a model the bank may not run is not a candidate, whatever its size. The book records each model's licence beside its pin, so a reader can see the same record the book used.
 

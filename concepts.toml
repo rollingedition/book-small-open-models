@@ -322,7 +322,7 @@ computed-from = ["accuracy"]
 id = "base-model"
 term = "base model"
 context = "large-language-models"
-definition = "A base model is a model already pretrained on a large amount of text, and here also instruction-tuned, which you adapt to one job."
+definition = "A base model is a model already pretrained on a large amount of text, which you adapt to one job."
 section = "the-candidates-and-what-we-keep"
 agrees = [{ book = "language-models-from-the-ground-up", definition = "the base model, the one trained only to predict the next token" }]
 

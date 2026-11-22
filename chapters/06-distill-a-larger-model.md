@@ -90,9 +90,9 @@ The adapter trained on {{out:student-vs-gold-control:banking77-lora-v1 training 
 
 A student trained on one label per message learns the labels it is given. Where the teacher is wrong on a row, the student has been shown the wrong team for that row, and it has no way to know otherwise. The teacher's agreement with gold on the training rows, [measured above](#label-training-rows-with-the-teacher), is the share of the teacher's training labels that are right. The student is measured on test messages and not on its training rows, because its figures on rows it trained on would show what it memorised rather than what it learned.
 
-{{fig:teacher-agreement-by-team}} draws one bar per team, as tall as its training rows, sorted from the highest share of rows the teacher gets right to the lowest, with the right rows at the bottom and the wrong ones hatched above them.
+{{fig:teacher-agreement-by-team}} draws one bar per team, as tall as the training rows the teacher labelled for it, sorted from the highest share of rows the teacher gets right to the lowest, with the right rows at the bottom and the wrong ones hatched above them.
 
-![On some teams the teacher gets every training row wrong, so its errors are not spread evenly across the teams](../examples/figures/teacher-agreement-by-team.svg "Each team's training rows, split into those where the teacher agrees with gold and those where it doesn't")
+![On some teams the teacher gets every row it labelled wrong, so its errors are not spread evenly across the teams.](../examples/figures/teacher-agreement-by-team.svg "Each team's training rows the teacher labelled, split into those where the teacher agrees with gold and those where it doesn't")
 
 [Example: figure-teacher-agreement-by-team](../examples/figure-teacher-agreement-by-team.py)
 

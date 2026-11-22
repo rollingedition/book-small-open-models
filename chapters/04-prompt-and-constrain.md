@@ -92,7 +92,7 @@ Distinct teams alone mislead. The 135M raw row gives {{out:prompting-on-test-200
 
 {{fig:answers-pile-on-one-team}} ranks each variant's teams by answers given. Every variant's top team dwarfs the even share over the {{out:figure-answers-pile-on-one-team:gold teams in test_200}} gold teams, {{out:figure-answers-pile-on-one-team:even share over the gold teams}}.
 
-![Every variant's most given team takes far more than an even share of the answers](../examples/figures/answers-pile-on-one-team.svg "Share of each variant's 200 answers given to its ten most given teams, ranked from the most given")
+![Every variant's most given team takes far more than an even share of the answers.](../examples/figures/answers-pile-on-one-team.svg "Share of each variant's 200 answers given to its ten most given teams, ranked from the most given")
 
 [Example: figure-answers-pile-on-one-team](../examples/figure-answers-pile-on-one-team.py)
 

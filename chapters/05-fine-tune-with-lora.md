@@ -70,7 +70,7 @@ The recording ends far below the uniform guess over 77 teams that [thirty steps 
 
 The shaded span on the left covers the short run's steps, and their mean loss is {{out:figure-lora-loss-curve:mean loss of the short run steps}}, above the guess. The moving mean last sits at or above the guess at step {{out:figure-lora-loss-curve:moving mean last at or above the guess, ending at step}}, and from step {{out:figure-lora-loss-curve:moving mean below the guess from step on}} to the last step it stays below the guess.
 
-![The recording's loss falls from above the uniform guess to well below it, and the short run covers only its first steps](../examples/figures/lora-loss-curve.svg "The loss at each step of the recorded run, its moving mean, and the uniform guess")
+![The recording's loss falls from above the uniform guess to well below it, and the short run covers only its first steps.](../examples/figures/lora-loss-curve.svg "The loss at each step of the recorded run, its moving mean, and the uniform guess")
 
 [Example: figure-lora-loss-curve](../examples/figure-lora-loss-curve.py)
 
