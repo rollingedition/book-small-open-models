@@ -31,7 +31,7 @@ id = "team"
 term = "team"
 context = "message-routing"
 aliases = ["intent"]
-definition = "A team is a label the router can return, such as `card_arrival`, and it is never a group of people."
+definition = "A team is a label the router can return, such as `card_arrival`, and it names where a message is sent, not the people who read it."
 section = "route-a-message"
 
 [[concepts]]
@@ -52,7 +52,7 @@ section = "route-a-message"
 id = "rough-router"
 term = "rough router"
 context = "message-routing"
-definition = "A router is rough when its threshold is a placeholder and its model is a stand-in"
+definition = "A router is rough when its threshold is a placeholder or its model is a stand-in"
 section = "route-a-message"
 
 [concepts.relations]
@@ -277,7 +277,7 @@ part-of = ["router"]
 id = "recording"
 term = "recording"
 context = "message-routing"
-definition = "A recording fixes the answers to one model at one revision, so a reader who runs the same example later sees the same numbers."
+definition = "A recording fixes the answers to one model at one revision, one prompt and one sample, so a reader who runs the same example later sees the same numbers."
 section = "the-baseline-from-recorded-answers"
 
 [concepts.relations]
@@ -311,7 +311,7 @@ close-to = ["https://rollingedition.com/concepts/artificial-intelligence/baselin
 id = "error"
 term = "error"
 context = "model-evaluation"
-definition = "With no threshold applied, the error is one minus accuracy"
+definition = "Whatever the threshold, the error is one minus accuracy"
 section = "where-the-labels-collide"
 example = "confusions-in-the-baseline"
 
@@ -322,7 +322,7 @@ computed-from = ["accuracy"]
 id = "base-model"
 term = "base model"
 context = "large-language-models"
-definition = "A base model is a model already pretrained on a large amount of text, which you adapt to one job."
+definition = "A base model is a model already pretrained on a large amount of text, and here also instruction-tuned, which you adapt to one job."
 section = "the-candidates-and-what-we-keep"
 agrees = [{ book = "language-models-from-the-ground-up", definition = "the base model, the one trained only to predict the next token" }]
 
@@ -346,7 +346,7 @@ same-as = ["https://rollingedition.com/concepts/large-language-models/pinned-rev
 id = "pins-file"
 term = "pins file"
 aliases = ["models.toml"]
-definition = "the pins file, `examples/models.toml`, records the SHA-256 of every file in that snapshot, which the runtime checks"
+definition = "the pins file, `examples/models.toml`, records the SHA-256 of every file the model needs from that snapshot, which the runtime checks"
 section = "load-each-model-at-its-pinned-revision"
 
 [[concepts]]
@@ -405,7 +405,7 @@ contrasts-with = ["generative-model"]
 id = "generative-model"
 term = "generative model"
 context = "large-language-models"
-definition = "A generative model reads the prompt once and then writes its answer one token at a time, and each token it writes is one more pass through the network."
+definition = "A generative model reads the prompt once and then writes its answer one token at a time, and each token it writes, the end token included, is one pass through the network."
 section = "measure-what-one-message-costs"
 example = "count-forward-passes"
 
@@ -425,7 +425,7 @@ example = "count-forward-passes"
 id = "median"
 term = "median"
 context = "model-evaluation"
-definition = "The median is the lower of the two middle values, so it is a whole number of tokens."
+definition = "The median here is the lower of the two middle values, so it is a whole number of tokens."
 section = "measure-what-one-message-costs"
 example = "count-prompt-tokens"
 
@@ -553,7 +553,7 @@ id = "classification-head"
 term = "classification head"
 context = "fine-tuning"
 aliases = ["score head", "classifier head"]
-definition = "A classification head works differently from the stand-in: it keeps the language model's layers and adds one output layer with 77 outputs, one for each team."
+definition = "A classification head works differently from the stand-in: it keeps the language model's layers but its output layer, and in its place adds one output layer with 77 outputs, one for each team."
 section = "a-head-that-scores-the-teams"
 
 [concepts.relations]
@@ -597,7 +597,7 @@ id = "lora"
 term = "LoRA"
 context = "fine-tuning"
 aliases = ["low-rank adaptation"]
-definition = "The paper that introduced LoRA, Hu et al. (2021), says it freezes the pre-trained weights and injects trainable low-rank matrices into the layers of the Transformer, and the trained LoRA matrices are the adapter."
+definition = "The paper that introduced LoRA, Hu et al. (2021), says it freezes the pre-trained weights and injects trainable low-rank matrices into the layers of the Transformer. In this book, the trained LoRA matrices are the adapter."
 section = "adapters-train-a-small-part-of-the-model"
 wikidata = "Q130145067"
 
@@ -611,7 +611,7 @@ id = "adapter"
 term = "adapter"
 context = "fine-tuning"
 aliases = ["LoRA adapter"]
-definition = "the trained LoRA matrices are the adapter"
+definition = "In this book, the trained LoRA matrices are the adapter."
 section = "adapters-train-a-small-part-of-the-model"
 
 [concepts.relations]
@@ -764,7 +764,7 @@ id = "quantization"
 term = "quantization"
 context = "fine-tuning"
 aliases = ["quantizing"]
-definition = "Quantizing a layer stores each of its weights as an 8-bit integer, with a scale that maps the integers back to approximate float values."
+definition = "Quantizing a layer's weights to int8 stores each of them as an 8-bit integer, with a scale that maps the integers back to approximate float values."
 section = "one-call-to-quantize-the-linear-layers"
 example = "int8-layers-and-bytes"
 
@@ -921,7 +921,7 @@ part-of = ["hand-off-watch"]
 id = "drift"
 term = "drift"
 context = "model-evaluation"
-definition = "A window drifts when its hand-off rate is more than a stated number of points from the baseline, in either direction."
+definition = "A window's hand-off rate drifts when it is more than a stated number of points from the baseline, in either direction."
 section = "watch-the-hand-off-rate"
 example = "handoff-windows"
 
@@ -943,7 +943,7 @@ contrasts-with = ["kept-message-sample"]
 id = "kept-message"
 term = "kept message"
 context = "message-routing"
-definition = "The keeps are the messages whose answers the route returned"
+definition = "The keeps are the messages whose teams the route returned"
 section = "sample-handed-off-messages-for-people"
 
 [concepts.relations]
@@ -971,7 +971,7 @@ example = "fallback-to-larger-model"
 [[concepts]]
 id = "version-check"
 term = "version check"
-definition = "The version check pins the SHA-256 of each adapter's `manifest.json` in `examples/adapter-pins.json`, and `make_app` refuses to build on any mismatch or a moved base pin."
+definition = "The version check pins the SHA-256 of each adapter's `manifest.json` in `examples/adapter-pins.json`, checks the output files and LoRA settings against the manifest, and `make_app` refuses to build on any mismatch or a moved base pin."
 section = "the-decisions-this-chapter-made"
 example = "adapter-manifest-check"
 

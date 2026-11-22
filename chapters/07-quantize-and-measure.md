@@ -12,7 +12,7 @@ The copy could take the float32 adapter's place in the [inbox](route-a-message) 
 
 ## One call to quantize the linear layers {#one-call-to-quantize-the-linear-layers}
 
-A linear layer is a weight matrix that maps one vector to another. The router's backbone is made of them. Quantizing a layer stores each of its weights as an 8-bit integer, with a scale that maps the integers back to approximate float values. Fewer bits per weight means fewer bytes for the layer, and the answers can move, because the values the layer computes are no longer the exact ones.
+A linear layer is a weight matrix that maps one vector to another. The router's backbone is made of them. Quantizing a layer's weights to int8 stores each of them as an 8-bit integer, with a scale that maps the integers back to approximate float values. Fewer bits per weight means fewer bytes for the layer, and the answers can move, because the values the layer computes are no longer the exact ones.
 
 The scale is what makes the scheme work for a whole matrix. A single scale for an entire matrix has to cover its largest weight, so the rows whose weights are small get a coarse grid. Jacob et al. (2018) report that a shared resolution gives channels with narrow ranges much larger relative error ([arXiv:1712.05877](https://arxiv.org/abs/1712.05877)). That is a CNN result, so here it is a reason to test per-row scales, not a measurement. A per-row scale lets each output row use the full range of the 8-bit integers for its own weights. That is why the byte count adds one float32 scale for each output row. The scales are few, but they are not free, so the byte count below includes them.
 
