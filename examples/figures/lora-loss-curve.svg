@@ -39,7 +39,7 @@ L 59.81804 196.398979
 L 59.81804 6.799068 
 L 49.792441 6.799068 
 z
-" clip-path="url(#p5b3623fab6)" style="fill: #61574a; opacity: 0.15"/>
+" clip-path="url(#p5b3623fab6)" style="fill: #61574a; opacity: 0.3"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
@@ -2302,6 +2302,11 @@ L 438.37084 186.248811
 L 457.79976 104.889521 
 " clip-path="url(#p5b3623fab6)" style="fill: none; stroke-dasharray: 4.07,1.76; stroke-dashoffset: 0; stroke: #1b1712; stroke-width: 1.1"/>
    </g>
+   <g id="line2d_36">
+    <path d="M 59.81804 196.398979 
+L 59.81804 6.799068 
+" clip-path="url(#p5b3623fab6)" style="fill: none; stroke: #61574a; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
    <g id="patch_4">
     <path d="M 30.363521 196.398979 
 L 30.363521 6.799068 
@@ -2316,7 +2321,7 @@ L 457.79976 196.398979
     <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="61.200882" y="17.332396" transform="rotate(-0 61.200882 17.332396)">the short run's 30 steps</text>
    </g>
    <g id="legend_1">
-    <g id="line2d_36">
+    <g id="line2d_37">
      <path d="M 242.507572 19.897506 
 L 252.507572 19.897506 
 L 262.507572 19.897506 
@@ -2325,7 +2330,7 @@ L 262.507572 19.897506
     <g id="text_20">
      <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="270.507572" y="23.397506" transform="rotate(-0 270.507572 23.397506)">loss at each step</text>
     </g>
-    <g id="line2d_37">
+    <g id="line2d_38">
      <path d="M 242.507572 34.898287 
 L 252.507572 34.898287 
 L 262.507572 34.898287 
@@ -2334,7 +2339,7 @@ L 262.507572 34.898287
     <g id="text_21">
      <text style="font-size: 10px; font-family: 'IBM Plex Sans', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b1712" x="270.507572" y="38.398287" transform="rotate(-0 270.507572 38.398287)">mean of the last 25 steps</text>
     </g>
-    <g id="line2d_38">
+    <g id="line2d_39">
      <path d="M 242.507572 49.899068 
 L 252.507572 49.899068 
 L 262.507572 49.899068 

@@ -66,13 +66,15 @@ The rule matters most when a result looks good. A training run that reads the te
 
 The working router uses `banking77-lora-v1`: the adapter from the full recorded run, version 1, written by `recordings/lora_full.py`. That script trained the adapter once, on the recipe in [the section on training rows](#train-on-the-training-rows-never-on-the-test-rows), and wrote its files and a manifest. The manifest holds the base model's revision, the data commit, the threshold, the recipe's hash and the hashes of the output files. Offline, the adapter loads and scores `test_200` at the threshold from its manifest, and nothing is trained.
 
-The recording ends far below the guess: over its last hundred steps the mean loss is {{out:figure-lora-loss-curve:mean loss of the last 100 steps}}, against {{out:figure-lora-loss-curve:loss of a uniform guess over 77 teams}} for a uniform guess. {{fig:lora-loss-curve}} draws every step of the recording. The thin grey line is the loss at each step, and the heavier line is its moving mean. The dashed line is the uniform guess, and the shaded span on the left is labelled the short run's 30 steps, whose mean loss is {{out:figure-lora-loss-curve:mean loss of steps 1-30}}.
+The recording ends far below the uniform guess over 77 teams that [thirty steps are not enough](#thirty-steps-are-not-enough) compares the short run against: over its last hundred steps the mean loss is {{out:figure-lora-loss-curve:mean loss of the last 100 steps}}, against {{out:figure-lora-loss-curve:loss of a uniform guess over 77 teams}}. {{fig:lora-loss-curve}} draws the loss at every step of the recording, with its moving mean and the uniform guess. The thin line is the loss at each step, and the heavy line is the moving mean.
+
+The shaded span on the left covers the short run's steps, and their mean loss is {{out:figure-lora-loss-curve:mean loss of the short run steps}}, above the guess. The moving mean last sits at or above the guess at step {{out:figure-lora-loss-curve:moving mean last at or above the guess, ending at step}}, and from step {{out:figure-lora-loss-curve:moving mean below the guess from step on}} to the last step it stays below the guess.
 
 ![The recording's loss falls from above the uniform guess to well below it, and the short run covers only its first steps](../examples/figures/lora-loss-curve.svg "The loss at each step of the recorded run, its moving mean, and the uniform guess")
 
 [Example: figure-lora-loss-curve](../examples/figure-lora-loss-curve.py)
 
-The short run and the recording share the seed and the batch size. The example checks that the recording's losses at steps 10, 20 and 30 round to the short run's printed values, and it prints yes.
+The recording used seed {{out:figure-lora-loss-curve:recording seed}} and batch size {{out:figure-lora-loss-curve:recording batch size}}, the same as the short run's {{out:lora-thirty-steps:seed}} and {{out:lora-thirty-steps:batch size}}.
 
 Take the adapter as it was recorded. A different recipe becomes a new run, named `v2`; the book does not edit the adapter by hand. Keeping the recording fixed is what lets a reader check the numbers in this chapter against the files they downloaded.
 
